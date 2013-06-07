@@ -11,6 +11,7 @@ import java.io.StreamCorruptedException;
 public class PoiInputStream extends InputStream {
 
 	private final PeekInputStream pin;
+	private PoiContainer parent;
 
 	public PoiInputStream(InputStream is) {
 		pin = new PeekInputStream(is);
@@ -50,7 +51,7 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Poi01 readPoi01(int type) throws IOException {
-		Poi01 poi = new Poi01(type, null);
+		Poi01 poi = new Poi01(type, parent);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
@@ -66,7 +67,7 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Poi02 readPoi02(int type) throws IOException {
-		Poi02 poi = new Poi02(type, null);
+		Poi02 poi = new Poi02(type, parent);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
@@ -80,14 +81,23 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Poi64 readPoi64(int type) throws IOException {
-		Poi64 poi = new Poi64(type, null);
+		Poi64 poi = new Poi64(type, parent);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
-		String name = pin.readString(length - 5);
-		poi.setName(name);
-		String icon = pin.readString(length - 5);
-		poi.setName(icon);
+		byte[] unknown1 = poi.getUnknown1();
+		pin.read(unknown1, 0, Poi64.UNKNOWN1);
+		//log.debug(hex(unknown1));
+		int version = pin.readInt();
+		poi.setVersion(version);
+		byte[] unknown2 = poi.getUnknown2();
+		pin.read(unknown2, 0, Poi64.UNKNOWN2);
+		//PoiFactory.log.debug(hex(unknown2));
+		byte check = pin.readByte();
+		poi.setCheck(check);
+		byte[] unknown3 = poi.getUnknown3();
+		pin.read(unknown3, 0, Poi64.UNKNOWN3);
+		//PoiFactory.log.debug(hex(unknown3));
 		return poi;
 	}
 

@@ -8,7 +8,7 @@ The format is the following :
 <p/>
 <table border="1">
   <tr><th width=110>Bytes</th><th>Description</th></tr>
-  <tr><td>1 byte</td><td>T: Record Type = <b>0x02 or <b>0x0f</b></b></td></tr>
+  <tr><td>1 byte</td><td>T: Record Type = <b>0x02</b> or <b>0x0f</b></td></tr>
   <tr><td>4 bytes</td><td>L: the total size of this record (including the T and L fields)</td></tr>
   <tr><td>4 bytes</td><td>X: {@link #longitude Longitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>4 bytes</td><td>Y: {@link #latitude Latitude} (in decimal degrees). This value has to be divide by 100000</td></tr>

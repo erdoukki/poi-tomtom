@@ -65,4 +65,31 @@ public abstract class PoiCommon implements Poi {
 		return offset;
 	}
 
+	private static int b2ch(byte b) {
+		return b & 0xff;
+	}
+
+	public static String hex(byte[] buff) {
+		StringBuffer result = new StringBuffer();
+		int j = 0;
+		// String s = reverseBits(buff);
+		int size = buff.length;
+		while (j < size) {
+			for (int i = 0; (i < 16) && (j + i < buff.length); i++) {
+				String x = "0" + Integer.toHexString(b2ch(buff[j + i]));
+				x = x.substring(x.length() - 2);
+				result.append(x);
+				result.append(" ");
+				// System.out.print(x + " ");
+			}
+			// if ((j+16) > size) {
+			// System.out.print(" " + s.substring(j*8,size*8) + " ");
+			// } else {
+			// System.out.print(" " + s.substring(j*8,(j+16)*8) + " ");
+			// }
+			// System.out.println();
+			j += 16;
+		}
+		return result.toString();
+	}
 }
