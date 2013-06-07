@@ -6,15 +6,19 @@ package poi.tomtom;
  * P bytes     	Name: 	zero-terminated ASCII string specifying the name of the POI type
  * L-P-5 bytes 	Icon: 	zero-terminated ASCII string specifying the name of the .BMP file
  * 
- * @author Orlin Tomov
+ * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
-public class Poi64 {
+public class Poi64 extends PoiCommon implements Poi {
 
-	static final byte type = 0x64;
+	public static final byte POI64 = 100;
+
 	private int length;
 	private String name;
 	private String icon;
 
+	public Poi64(int type, PoiContainer parent) {
+		super(type, parent);
+	}
 	public int getLength() {
 		return length;
 	}
@@ -32,9 +36,6 @@ public class Poi64 {
 	}
 	public void setIcon(String icon) {
 		this.icon = icon;
-	}
-	public static byte getType() {
-		return type;
 	}
 
 	@Override

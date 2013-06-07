@@ -1,25 +1,35 @@
 package poi.tomtom;
 
 /**
- * Simple POI record:
- * 1 byte    	T: 	type (always 2)
- * 4 bytes   	L: 	length of this record in bytes (including the T and L fields)
- * 4 bytes   	X: 	longitude coordinate of the POI
- * 4 bytes   	Y: 	latitude coordinate of the POI
- * L-13 bytes	N: 	zero-terminated ASCII string specifying the name of the POI
- * 
- * @author Orlin Tomov
- */
-public class Poi02 implements Poi {
+<h3>Record 02 & 15.</h3>
+This record is a {@link PoiRecord POI Record}. This record is used in .OV2 file. It is a plain text record
+<br/>
+The format is the following :
+<p/>
+<table border="1">
+  <tr><th width=110>Bytes</th><th>Description</th></tr>
+  <tr><td>1 byte</td><td>T: Record Type = <b>0x02 or <b>0x0f</b></b></td></tr>
+  <tr><td>4 bytes</td><td>L: the total size of this record (including the T and L fields)</td></tr>
+  <tr><td>4 bytes</td><td>X: {@link #longitude Longitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
+  <tr><td>4 bytes</td><td>Y: {@link #latitude Latitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
+  <tr><td>N bytes</td><td>Plain text {@link #description POI description}</td></tr>
+</table>
 
-	static final byte type = 2;
+ * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
+ */
+public class Poi02 extends PoiCommon implements PoiRecord {
+
+	public static final byte POI02 = 2;
+	public static final byte POI03 = 3;
+	public static final byte POI0F = 15;
+
 	private int length;
 	private int longitude;
 	private int latitude;
 	private String name;
 
-	public static byte getType() {
-		return type;
+	public Poi02(int type, PoiContainer parent) {
+		super(type, parent);
 	}
 	public int getLength() {
 		return length;

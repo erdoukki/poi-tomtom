@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StreamCorruptedException;
 
+/**
+ * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
+ */
 public class PoiInputStream extends InputStream {
 
 	private final PeekInputStream pin;
@@ -28,14 +31,16 @@ public class PoiInputStream extends InputStream {
 		byte type = pin.peekByte();
 
 		switch (type) {
-			case Poi01.type: {
-				return (P) readPoi01();
+			case Poi01.POI01: {
+				return (P) readPoi01(type);
 			}
-			case Poi02.type: {
-				return (P) readPoi02();
+			case Poi02.POI02: 
+			case Poi02.POI03: 
+			case Poi02.POI0F: {
+				return (P) readPoi02(type);
 			}
-			case Poi64.type: {
-				return (P) readPoi64();
+			case Poi64.POI64: {
+				return (P) readPoi64(type);
 			}
 			default: {
 				throw new StreamCorruptedException(
@@ -44,8 +49,8 @@ public class PoiInputStream extends InputStream {
 		}
 	}
 
-	private Poi01 readPoi01() throws IOException {
-		Poi01 poi = new Poi01();
+	private Poi01 readPoi01(int type) throws IOException {
+		Poi01 poi = new Poi01(type, null);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
@@ -60,8 +65,8 @@ public class PoiInputStream extends InputStream {
 		return poi;
 	}
 
-	private Poi02 readPoi02() throws IOException {
-		Poi02 poi = new Poi02();
+	private Poi02 readPoi02(int type) throws IOException {
+		Poi02 poi = new Poi02(type, null);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
@@ -74,8 +79,8 @@ public class PoiInputStream extends InputStream {
 		return poi;
 	}
 
-	private Poi64 readPoi64() throws IOException {
-		Poi64 poi = new Poi64();
+	private Poi64 readPoi64(int type) throws IOException {
+		Poi64 poi = new Poi64(type, null);
 		/**byte type =*/ pin.readByte();
 		int length = pin.readInt();
 		poi.setLength(length);
@@ -183,21 +188,26 @@ public class PoiInputStream extends InputStream {
 		}
 
 		public int readInt() throws IOException {
-			byte[] buf = new byte[4];
-			read(buf, 0, 4);
-			int v = Bits.getInt(buf, 0);
+			int v = 0;
+			for (int i = 0; i < 4; i++) {
+				int b = read();
+				//log.debug(": 0x" + Integer.toHexString(b));
+				b <<= 8 * i;
+				v += b;
+			}
 			return v;
 		}
 
 		public String readString(int len) throws IOException {
-			byte[] buf = new byte[len];
-			read(buf, 0, len);
+			StringBuffer s = new StringBuffer();
 			for (int i = 0; i < len; i++) {
-				if (buf[i] == 0) {
-					return new String(buf, 0, i);
+				char c = (char) read();
+				if (c == 0) {
+					return s.toString();
 				}
+				s.append(c);
 			}
-		    return new String(buf);
+			return s.toString();
 		}
 	}
 }
