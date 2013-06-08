@@ -68,16 +68,16 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 	 */
 	public void setName(String name, CharMode charMode) {
 		this.name = super.encode(name, charMode);
-		setSize(this.name.length + HEADER);
+		super.setSize(this.name.length + HEADER);
 	}
 
 	public void setName(byte[] name) {
 		this.name = name;
-		setSize(this.name.length + HEADER);
+		super.setSize(this.name.length + HEADER);
 	}
 
 	@Override
 	public String toString() {
-		return "Poi"+Integer.toHexString(getType())+" [S:" + size() + ", X:" + longitude + ", Y:" + latitude + ", N:" + getName() + "]";
+		return "Poi0"+Integer.toHexString(getType())+" [S:" + size() + ", X:" + longitude + ", Y:" + latitude + ", N:" + getName() + "]";
 	}
 }
