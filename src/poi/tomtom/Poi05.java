@@ -21,7 +21,7 @@ public class Poi05 extends Poi04 {
 	public static final int TYPE_05 = 5;
 	public static final int TYPE_15 = 21;
 
-	private static final int SIZE = 11;
+	public static final int SIZE = 9;
 
 	private int name;
 
