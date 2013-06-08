@@ -70,7 +70,7 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 	 * @return decoded description
 	 */
 	public void setName(String name, CharMode charMode) {
-		this.name = super.encode(name, charMode);
+		this.name = encode(name, charMode);
 		super.setSize(this.name.length + HEADER);
 	}
 

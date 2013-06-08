@@ -78,6 +78,10 @@ public class PoiInputStream extends InputStream {
 			case Poi07.TYPE_17: {
 				return (P) readPoi07(type);
 			}
+			case Poi08.TYPE_08: 
+			case Poi08.TYPE_18: {
+				return (P) readPoi08(type);
+			}
 			case Poi64.TYPE_64: {
 				return (P) readPoi64(type);
 			}
@@ -173,6 +177,23 @@ public class PoiInputStream extends InputStream {
 		int latitude = readInt3();
 		poi.setLat(latitude);
 		byte[] name = new byte[size - Poi07.HEADER];
+		read(name, 0, name.length);
+		poi.setName(name);
+
+		addChild(poi.size());
+		return poi;
+	}
+
+	private Poi08 readPoi08(int type) throws IOException {
+		Poi08 poi = new Poi08(type, getParent());
+		type = readByte();
+		int size = readByte();
+		poi.setSize(size);
+		int longitude = readInt3();
+		poi.setLon(longitude);
+		int latitude = readInt3();
+		poi.setLat(latitude);
+		byte[] name = new byte[size - Poi08.HEADER];
 		read(name, 0, name.length);
 		poi.setName(name);
 
