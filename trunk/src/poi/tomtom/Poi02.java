@@ -9,7 +9,7 @@ The format is the following :
 <table border="1">
   <tr><th width=110>Bytes</th><th>Description</th></tr>
   <tr><td>1 byte</td><td>T: Record Type = <b>0x02</b> or <b>0x0f</b></td></tr>
-  <tr><td>4 bytes</td><td>L: the total size of this record (including the T and L fields)</td></tr>
+  <tr><td>4 bytes</td><td>S: the total size of this record in bytes</td></tr>
   <tr><td>4 bytes</td><td>X: {@link #longitude Longitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>4 bytes</td><td>Y: {@link #latitude Latitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>N bytes</td><td>Plain text {@link #description POI description}</td></tr>
@@ -19,23 +19,25 @@ The format is the following :
  */
 public class Poi02 extends PoiCommon implements PoiRecord {
 
+	public static final byte HEADER = 13;
+	
 	public static final byte POI02 = 2;
 	public static final byte POI03 = 3;
 	public static final byte POI0F = 15;
 
-	private int length;
 	private int longitude;
 	private int latitude;
-	private String name;
+	private byte[] name = new byte[] {0};
 
 	public Poi02(int type, PoiContainer parent) {
 		super(type, parent);
+		/** T, L, X, Y, N */
+		setSize(HEADER + name.length);
 	}
-	public int getLength() {
-		return length;
-	}
-	public void setLength(int length) {
-		this.length = length;
+
+	public void setSize(int length) {
+		name = new byte[length - HEADER];
+		super.setSize(length);
 	}
 	public int getLongitude() {
 		return longitude;
@@ -49,15 +51,33 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 	public void setLatitude(int latitude) {
 		this.latitude = latitude;
 	}
+
+	/**
+	 * Decodes POI description.
+	 *
+	 * @return decoded description
+	 */
 	public String getName() {
-		return name;
+		return decode(name);
 	}
-	public void setName(String name) {
+
+	/**
+	 * Encodes POI description.
+	 *
+	 * @return decoded description
+	 */
+	public void setName(String name, CharMode charMode) {
+		this.name = super.encode(name, charMode);
+		setSize(this.name.length + HEADER);
+	}
+
+	public void setName(byte[] name) {
 		this.name = name;
+		setSize(this.name.length + HEADER);
 	}
 
 	@Override
 	public String toString() {
-		return "Poi02 [L:" + length + " X:" + longitude + " Y:" + latitude + " N:" + name + "]";
+		return "Poi"+Integer.toHexString(getType())+" [S:" + size() + ", X:" + longitude + ", Y:" + latitude + ", N:" + getName() + "]";
 	}
 }

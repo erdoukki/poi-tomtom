@@ -4,6 +4,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StreamCorruptedException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
@@ -11,20 +13,36 @@ import java.io.StreamCorruptedException;
 public class PoiInputStream extends InputStream {
 
 	private final PeekInputStream pin;
-	private PoiContainer parent;
+	private Map<PoiContainer, Integer> parents;
 
 	public PoiInputStream(InputStream is) {
 		pin = new PeekInputStream(is);
+		parents = new LinkedHashMap<PoiContainer, Integer>();
 	}
 
-	@Override
-	public int available() throws IOException {
-		return pin.available();
+	private PoiContainer getParent() {
+		if (parents.size() > 0) {
+			return parents.keySet().iterator().next();
+		}
+		return null;
 	}
 
-	@Override
-	public int read() throws IOException {
-		return pin.read();
+	private void addParent(Poi01 parent, int length) {
+		parents.put(parent, length);
+	}
+
+	private void addChild(int size) {
+		PoiContainer parent = getParent();
+		if (parent != null) {
+			int rest = parents.get(parent) - size;
+			if (rest > 0) {
+				parents.put(parent, rest);
+			} else if (rest == 0) {
+				parents.remove(parent);
+			} else {
+				//log.error("Unread " + rest + " bytes from " + parent);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -51,10 +69,10 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Poi01 readPoi01(int type) throws IOException {
-		Poi01 poi = new Poi01(type, parent);
-		/**byte type =*/ pin.readByte();
-		int length = pin.readInt();
-		poi.setLength(length);
+		Poi01 poi = new Poi01(type, getParent());
+		type = pin.readByte();
+		int size = pin.readInt();
+		//poi.setLength(length);
 		int longitude1 = pin.readInt();
 		poi.setLongitude1(longitude1);
 		int latitude1 = pin.readInt();
@@ -63,28 +81,33 @@ public class PoiInputStream extends InputStream {
 		poi.setLongitude2(longitude2);
 		int latitude2 = pin.readInt();
 		poi.setLatitude2(latitude2);
+
+		addParent(poi, size - poi.size());
 		return poi;
 	}
 
 	private Poi02 readPoi02(int type) throws IOException {
-		Poi02 poi = new Poi02(type, parent);
-		/**byte type =*/ pin.readByte();
-		int length = pin.readInt();
-		poi.setLength(length);
+		Poi02 poi = new Poi02(type, getParent());
+		type = pin.readByte();
+		int size = pin.readInt();
+		poi.setSize(size);
 		int longitude = pin.readInt();
 		poi.setLongitude(longitude);
 		int latitude = pin.readInt();
 		poi.setLatitude(latitude);
-		String name = pin.readString(length - 13);
+		byte[] name = new byte[size - Poi02.HEADER];
+		pin.read(name, 0, name.length);
 		poi.setName(name);
+
+		addChild(size);
 		return poi;
 	}
 
 	private Poi64 readPoi64(int type) throws IOException {
-		Poi64 poi = new Poi64(type, parent);
-		/**byte type =*/ pin.readByte();
-		int length = pin.readInt();
-		poi.setLength(length);
+		Poi64 poi = new Poi64(type, getParent());
+		type = pin.readByte();
+		int size = pin.readInt();
+		poi.setSize(size);
 		byte[] unknown1 = poi.getUnknown1();
 		pin.read(unknown1, 0, Poi64.UNKNOWN1);
 		//log.debug(hex(unknown1));
@@ -92,13 +115,61 @@ public class PoiInputStream extends InputStream {
 		poi.setVersion(version);
 		byte[] unknown2 = poi.getUnknown2();
 		pin.read(unknown2, 0, Poi64.UNKNOWN2);
-		//PoiFactory.log.debug(hex(unknown2));
+		//log.debug(hex(unknown2));
 		byte check = pin.readByte();
 		poi.setCheck(check);
 		byte[] unknown3 = poi.getUnknown3();
 		pin.read(unknown3, 0, Poi64.UNKNOWN3);
-		//PoiFactory.log.debug(hex(unknown3));
+		//log.debug(hex(unknown3));
+
+		addChild(size);
 		return poi;
+	}
+
+	@Override
+	public int read() throws IOException {
+		return pin.read();
+	}
+
+	@Override
+	public int read(byte[] buffer) throws IOException {
+		return pin.read(buffer);
+	}
+
+	@Override
+	public int read(byte[] buffer, int start, int len) throws IOException {
+		return pin.read(buffer, start, len);
+	}
+
+	@Override
+	public long skip(long size) throws IOException {
+		//log.error("skip is not implemeted!");
+		return 0;
+	}
+
+	@Override
+	public int available() throws IOException {
+		return pin.available();
+	}
+
+	@Override
+	public void close() throws IOException {
+		pin.close();
+	}
+
+	@Override
+	public void mark(int mark) {
+		//log.error("skip is not implemeted!");
+	}
+
+	@Override
+	public void reset() {
+		//log.error("skip is not implemeted!");
+	}
+
+	@Override
+	public boolean markSupported() {
+		return false;
 	}
 
 	/**
@@ -206,18 +277,6 @@ public class PoiInputStream extends InputStream {
 				v += b;
 			}
 			return v;
-		}
-
-		public String readString(int len) throws IOException {
-			StringBuffer s = new StringBuffer();
-			for (int i = 0; i < len; i++) {
-				char c = (char) read();
-				if (c == 0) {
-					return s.toString();
-				}
-				s.append(c);
-			}
-			return s.toString();
 		}
 	}
 }
