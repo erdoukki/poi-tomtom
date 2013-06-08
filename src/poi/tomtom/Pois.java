@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
-public class Pois extends PoiCommon implements PoiContainer {
+public abstract class Pois extends PoiCommon implements PoiContainer {
 
 	private List<Poi> records = new ArrayList<Poi>();
 
