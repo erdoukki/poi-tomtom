@@ -37,10 +37,10 @@ public abstract class Pois extends PoiCommon implements PoiContainer {
 		}
 		if (root == null) {
 			root = new Poi01((byte)1, this);
-			root.setLatitude1(((PoiRecord)poi).getLatitude());
-			root.setLongitude1(((PoiRecord)poi).getLongitude());
-			root.setLatitude2(((PoiRecord)poi).getLatitude());
-			root.setLongitude2(((PoiRecord)poi).getLongitude());
+			root.setLat1(((PoiRecord)poi).getLat());
+			root.setLon1(((PoiRecord)poi).getLon());
+			root.setLat2(((PoiRecord)poi).getLat());
+			root.setLon2(((PoiRecord)poi).getLon());
 			setSize(size() + root.size());
 			records.add(count(), root);
 		}

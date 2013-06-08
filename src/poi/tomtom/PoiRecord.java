@@ -20,11 +20,11 @@ public interface PoiRecord extends Poi {
   /**
    * longitude.
    */
-  public int getLongitude();
+  public int getLon();
 
   /**
    * latitude.
    */
-  public int getLatitude();
+  public int getLat();
 
 }

@@ -21,9 +21,9 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 
 	public static final byte HEADER = 13;
 	
-	public static final byte POI02 = 2;
-	public static final byte POI03 = 3;
-	public static final byte POI0F = 15;
+	public static final byte TYPE_02 = 2;
+	public static final byte TYPE_03 = 3;
+	public static final byte TYPE_0F = 15;
 
 	private int longitude;
 	private int latitude;
@@ -35,20 +35,23 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 		setSize(HEADER + name.length);
 	}
 
+	@Override
 	public void setSize(int length) {
 		name = new byte[length - HEADER];
 		super.setSize(length);
 	}
-	public int getLongitude() {
+	@Override
+	public int getLon() {
 		return longitude;
 	}
-	public void setLongitude(int longitude) {
+	public void setLon(int longitude) {
 		this.longitude = longitude;
 	}
-	public int getLatitude() {
+	@Override
+	public int getLat() {
 		return latitude;
 	}
-	public void setLatitude(int latitude) {
+	public void setLat(int latitude) {
 		this.latitude = latitude;
 	}
 

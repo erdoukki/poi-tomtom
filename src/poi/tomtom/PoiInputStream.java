@@ -54,15 +54,19 @@ public class PoiInputStream extends InputStream {
 		byte type = peekByte();
 
 		switch (type) {
-			case Poi01.POI01: {
+			case Poi01.TYPE_01: {
 				return (P) readPoi01(type);
 			}
-			case Poi02.POI02: 
-			case Poi02.POI03: 
-			case Poi02.POI0F: {
+			case Poi02.TYPE_02: 
+			case Poi02.TYPE_03: 
+			case Poi02.TYPE_0F: {
 				return (P) readPoi02(type);
 			}
-			case Poi64.POI64: {
+			case Poi04.TYPE_04: 
+			case Poi04.TYPE_14: {
+				return (P) readPoi04(type);
+			}
+			case Poi64.TYPE_64: {
 				return (P) readPoi64(type);
 			}
 			default: {
@@ -78,13 +82,13 @@ public class PoiInputStream extends InputStream {
 		int size = readInt();
 		//poi.setLength(length);
 		int longitude1 = readInt();
-		poi.setLongitude1(longitude1);
+		poi.setLon1(longitude1);
 		int latitude1 = readInt();
-		poi.setLatitude1(latitude1);
+		poi.setLat1(latitude1);
 		int longitude2 = readInt();
-		poi.setLongitude2(longitude2);
+		poi.setLon2(longitude2);
 		int latitude2 = readInt();
-		poi.setLatitude2(latitude2);
+		poi.setLat2(latitude2);
 
 		addParent(poi, size - poi.size());
 		return poi;
@@ -96,12 +100,26 @@ public class PoiInputStream extends InputStream {
 		int size = readInt();
 		poi.setSize(size);
 		int longitude = readInt();
-		poi.setLongitude(longitude);
+		poi.setLon(longitude);
 		int latitude = readInt();
-		poi.setLatitude(latitude);
+		poi.setLat(latitude);
 		byte[] name = new byte[size - Poi02.HEADER];
 		read(name, 0, name.length);
 		poi.setName(name);
+
+		addChild(size);
+		return poi;
+	}
+
+	private Poi04 readPoi04(int type) throws IOException {
+		Poi04 poi = new Poi04(type, getParent());
+		type = readByte();
+		int size = readInt();
+		poi.setSize(size);
+		int longitude = readInt3();
+		poi.setLon(longitude);
+		int latitude = readInt3();
+		poi.setLat(latitude);
 
 		addChild(size);
 		return poi;
@@ -227,6 +245,17 @@ public class PoiInputStream extends InputStream {
 	public int readInt() throws IOException {
 		int v = 0;
 		for (int i = 0; i < 4; i++) {
+			int b = read();
+			//log.debug(": 0x" + Integer.toHexString(b));
+			b <<= 8 * i;
+			v += b;
+		}
+		return v;
+	}
+
+	public int readInt3() throws IOException {
+		int v = 0;
+		for (int i = 0; i < 3; i++) {
 			int b = read();
 			//log.debug(": 0x" + Integer.toHexString(b));
 			b <<= 8 * i;

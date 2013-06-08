@@ -14,24 +14,24 @@ public interface AreaRecord extends PoiContainer {
   /**
    * longitude 1.
    */
-  public int getLongitude1();
-  public void setLongitude1(int longitude);
+  public int getLon1();
+  public void setLon1(int longitude);
 
   /**
    * latitude 1.
    */
-  public int getLatitude1();
-  public void setLatitude1(int latitude);
+  public int getLat1();
+  public void setLat1(int latitude);
 
   /**
    * longitude 2.
    */
-  public int getLongitude2();
-  public void setLongitude2(int longitude);
+  public int getLon2();
+  public void setLon2(int longitude);
 
   /**
    * latitude 2.
    */
-  public int getLatitude2();
-  public void setLatitude2(int latitude);
+  public int getLat2();
+  public void setLat2(int latitude);
 }

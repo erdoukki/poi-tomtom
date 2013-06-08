@@ -1,5 +1,8 @@
 package poi.tomtom;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 /**
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
@@ -8,6 +11,14 @@ public abstract class PoiCommon implements Poi {
 	private int type;
 	private int size = 0;
 	private PoiContainer parent;
+
+	public static final double LL = 100000.;
+	private static final DecimalFormat nf;
+	static {
+		DecimalFormatSymbols ns = new DecimalFormatSymbols();
+		ns.setDecimalSeparator('.');
+		nf = new DecimalFormat("0.00000", ns);
+	};
 
 	/**
 	 * constructor.
@@ -203,4 +214,8 @@ public abstract class PoiCommon implements Poi {
 			return text;
 		}
 	};
+
+	public static String nf(double n) {
+		return nf.format(n);
+	}
 }

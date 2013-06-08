@@ -21,7 +21,7 @@ The format is the following :
  */
 public class Poi64 extends PoiCommon implements Poi {
 
-	public static final byte POI64 = 100;
+	public static final byte TYPE_64 = 100;
 
 	public static final int SIZE = 21;
 	public static final int UNKNOWN1 = 4;
