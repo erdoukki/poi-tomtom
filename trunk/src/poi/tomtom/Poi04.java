@@ -20,6 +20,8 @@ public class Poi04 extends PoiCommon implements PoiRecord {
 	public static final int TYPE_04 = 4;
 	public static final int TYPE_14 = 20;
 
+	private static final int SIZE = 9;
+
 	private int latitude;
 	private int longitude;
 
@@ -29,6 +31,7 @@ public class Poi04 extends PoiCommon implements PoiRecord {
 	 */
 	public Poi04(int type, PoiContainer parent) {
 		super(type, parent);
+		setSize(SIZE);
 	}
 
 	@Override
