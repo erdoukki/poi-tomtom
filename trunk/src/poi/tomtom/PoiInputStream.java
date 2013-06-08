@@ -70,6 +70,10 @@ public class PoiInputStream extends InputStream {
 			case Poi05.TYPE_15: {
 				return (P) readPoi05(type);
 			}
+			case Poi06.TYPE_06: 
+			case Poi06.TYPE_16: {
+				return (P) readPoi06(type);
+			}
 			case Poi64.TYPE_64: {
 				return (P) readPoi64(type);
 			}
@@ -134,7 +138,21 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		short name = readShort();
+		int name = readInt2();
+		poi.setName(name);
+
+		addChild(poi.size());
+		return poi;
+	}
+
+	private Poi06 readPoi06(int type) throws IOException {
+		Poi06 poi = new Poi06(type, getParent());
+		type = readByte();
+		int longitude = readInt3();
+		poi.setLon(longitude);
+		int latitude = readInt3();
+		poi.setLat(latitude);
+		int name = readInt3();
 		poi.setName(name);
 
 		addChild(poi.size());
@@ -258,8 +276,8 @@ public class PoiInputStream extends InputStream {
 		return (byte) v;
 	}
 
-	public short readShort() throws IOException {
-		short v = 0;
+	public int readInt() throws IOException {
+		int v = 0;
 		for (int i = 0; i < 4; i++) {
 			int b = read();
 			//log.debug(": 0x" + Integer.toHexString(b));
@@ -269,9 +287,9 @@ public class PoiInputStream extends InputStream {
 		return v;
 	}
 
-	public int readInt() throws IOException {
+	public int readInt2() throws IOException {
 		int v = 0;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 2; i++) {
 			int b = read();
 			//log.debug(": 0x" + Integer.toHexString(b));
 			b <<= 8 * i;
