@@ -9,7 +9,7 @@ The format is the following :
 <table border="1">
   <tr><th width=110>Bytes</th><th>Description</th></tr>
   <tr><td>1 byte</td><td>The record type = <b>0x01</b></td></tr>
-  <tr><td>4 bytes</td><td>N : the total size of this record (including the 21 bytes header)</td></tr>
+  <tr><td>4 bytes</td><td>S : the total size of this record in bytes (including the 21 bytes header)</td></tr>
   <tr><td>4 bytes</td><td>{@link #longitude1 Longitude1} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>4 bytes</td><td>{@link #latitude1 Latitude1} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>4 bytes</td><td>{@link #longitude2 Longitude2} (in decimal degrees). This value has to be divide by 100000</td></tr>
@@ -23,7 +23,8 @@ public class Poi01 extends Pois implements AreaRecord {
 
 	public static final byte POI01 = 1;
 
-	private int length = 1 + 4 + 4 + 4 + 4 + 4;
+	public static final int SIZE = 21;
+
 	private int longitude1;
 	private int latitude1;
 	private int longitude2;
@@ -31,14 +32,9 @@ public class Poi01 extends Pois implements AreaRecord {
 
 	protected Poi01(int type, PoiContainer parent) {
 		super(type, parent);
+		setSize(SIZE);
 	}
 
-	public int getLength() {
-		return length;
-	}
-	public void setLength(int length) {
-		this.length = length;
-	}
 	@Override
 	public int getLongitude1() {
 		return longitude1;
@@ -165,6 +161,6 @@ public class Poi01 extends Pois implements AreaRecord {
 
 	@Override
 	public String toString() {
-		return "Poi01 [L:" + length + " X1:" + longitude1 + " Y1:" + latitude1 + " X2:" + longitude2 + " Y2:" + latitude2 + "]";
+		return "Poi01 [S:" + size() + ", X1:" + longitude1 + ", Y1:" + latitude1 + ", X2:" + longitude2 + ", Y2:" + latitude2 + "]";
 	}
 }
