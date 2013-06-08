@@ -24,7 +24,7 @@ public class Poi07 extends Poi04 {
 
 	public static final int HEADER = 8;
 
-	private byte[] name = new byte[] {0};
+	protected byte[] name = new byte[] {0};
 
 	/**
 	 * constructor.
@@ -55,7 +55,7 @@ public class Poi07 extends Poi04 {
 	 * @return decoded description
 	 */
 	public void setName(String name, CharMode charMode) {
-		this.name = super.encode(name, charMode);
+		this.name = encode(name, charMode);
 		super.setSize(this.name.length + HEADER);
 	}
 
