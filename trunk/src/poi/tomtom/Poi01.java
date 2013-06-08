@@ -21,7 +21,7 @@ The format is the following :
  */
 public class Poi01 extends Pois implements AreaRecord {
 
-	public static final byte POI01 = 1;
+	public static final byte TYPE_01 = 1;
 
 	public static final int SIZE = 21;
 
@@ -36,35 +36,35 @@ public class Poi01 extends Pois implements AreaRecord {
 	}
 
 	@Override
-	public int getLongitude1() {
+	public int getLon1() {
 		return longitude1;
 	}
 	@Override
-	public void setLongitude1(int longitude1) {
+	public void setLon1(int longitude1) {
 		this.longitude1 = longitude1;
 	}
 	@Override
-	public int getLatitude1() {
+	public int getLat1() {
 		return latitude1;
 	}
 	@Override
-	public void setLatitude1(int latitude1) {
+	public void setLat1(int latitude1) {
 		this.latitude1 = latitude1;
 	}
 	@Override
-	public int getLongitude2() {
+	public int getLon2() {
 		return longitude2;
 	}
 	@Override
-	public void setLongitude2(int longitude2) {
+	public void setLon2(int longitude2) {
 		this.longitude2 = longitude2;
 	}
 	@Override
-	public int getLatitude2() {
+	public int getLat2() {
 		return latitude2;
 	}
 	@Override
-	public void setLatitude2(int latitude2) {
+	public void setLat2(int latitude2) {
 		this.latitude2 = latitude2;
 	}
 
@@ -77,21 +77,21 @@ public class Poi01 extends Pois implements AreaRecord {
 	}
 
 	public boolean add(PoiRecord poi) {
-		if (longitude1 < poi.getLongitude()) {
-			longitude1 = poi.getLongitude();
+		if (longitude1 < poi.getLon()) {
+			longitude1 = poi.getLon();
 		}
-		if (longitude2 > poi.getLongitude()) {
-			longitude2 = poi.getLongitude();
+		if (longitude2 > poi.getLon()) {
+			longitude2 = poi.getLon();
 		}
-		if (latitude1 < poi.getLatitude()) {
-			latitude1 = poi.getLatitude();
+		if (latitude1 < poi.getLat()) {
+			latitude1 = poi.getLat();
 		}
-		if (latitude2 > poi.getLatitude()) {
-			latitude2 = poi.getLatitude();
+		if (latitude2 > poi.getLat()) {
+			latitude2 = poi.getLat();
 		}
 		int i = 0;
 		while (i < count()) {
-			if (((PoiRecord) get(i)).getLongitude() > poi.getLongitude()) {
+			if (((PoiRecord) get(i)).getLon() > poi.getLon()) {
 				break;
 			}
 			i++;
@@ -107,20 +107,20 @@ public class Poi01 extends Pois implements AreaRecord {
 		add(0, root);
 		//root.size(TYPE + SIZE + LONGITUDE + LATITUDE + LONGITUDE + LATITUDE);
 		if (hv) {
-			root.setLongitude1(getLongitude2()); // 2!!!
-			root.setLatitude1(getLatitude1());
+			root.setLon1(getLon2()); // 2!!!
+			root.setLat1(getLat1());
 		} else {
-			root.setLongitude1(getLongitude1());
-			root.setLatitude1(getLatitude2()); // 2!!!
+			root.setLon1(getLon1());
+			root.setLat1(getLat2()); // 2!!!
 		}
-		root.setLongitude2(getLongitude2());
-		root.setLatitude2(getLatitude2());
+		root.setLon2(getLon2());
+		root.setLat2(getLat2());
 		while (half > 0) {
 			int i = 1;
 			if (!hv) {
-				int lat = ((PoiRecord) get(1)).getLatitude();
+				int lat = ((PoiRecord) get(1)).getLat();
 				for (int j = 2; j < count(); j++) {
-					if (((PoiRecord) get(j)).getLatitude() < lat) {
+					if (((PoiRecord) get(j)).getLat() < lat) {
 						i = j;
 					}
 				}
@@ -132,14 +132,14 @@ public class Poi01 extends Pois implements AreaRecord {
 		root = new Poi01(1, this);
 		add(1, root);
 		//root.size(TYPE + SIZE + LONGITUDE + LATITUDE + LONGITUDE + LATITUDE);
-		root.setLongitude1(getLongitude1());
-		root.setLatitude1(getLatitude1());
+		root.setLon1(getLon1());
+		root.setLat1(getLat1());
 		if (hv) {
-			root.setLongitude2(((AreaRecord) get(0)).getLongitude1()); // !!!
-			root.setLatitude2(getLatitude2());
+			root.setLon2(((AreaRecord) get(0)).getLon1()); // !!!
+			root.setLat2(getLat2());
 		} else {
-			root.setLongitude2(getLongitude2());
-			root.setLatitude2(((AreaRecord) get(0)).getLatitude1()); // !!!
+			root.setLon2(getLon2());
+			root.setLat2(((AreaRecord) get(0)).getLat1()); // !!!
 		}
 		while (count() > 2) {
 			int i = 2;
