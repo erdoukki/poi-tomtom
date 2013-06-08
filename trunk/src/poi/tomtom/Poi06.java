@@ -2,7 +2,7 @@ package poi.tomtom;
 
 /**
 <H3>Record 06 & 22.</H3>
-This Record is an POI Record. The POI description is a short numeric value.
+This Record is an POI Record. The POI description is a numeric value.
 <BR>
 The Format is the following :
 <P>
@@ -21,7 +21,7 @@ public class Poi06 extends Poi04 {
 	public static final int TYPE_06 = 6;
 	public static final int TYPE_16 = 22;
 
-	private static final int SIZE = 12;
+	public static final int SIZE = 10;
 
 	private int name;
 
