@@ -110,7 +110,8 @@ The compressed method is the following :
 	 *
 	 * @return decoded description
 	 */
-	protected String decode() {
+	@Override
+	protected String decode(byte[] name) {
 		StringBuffer s = new StringBuffer(size());
 		for (int i = 0; i < name.length; i++) {
 			int b = name[i] & 0xff;

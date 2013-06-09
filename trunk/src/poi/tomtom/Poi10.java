@@ -99,7 +99,8 @@ get the modulus 3 : ((8281/40)/40) % 40 = 5 : E
 
 	 * @return decoded description
 	 */
-	public String decode() {
+	@Override
+	protected String decode(byte[] name) {
 		StringBuffer s = new StringBuffer();
 		int index = name.length;
 		while (index > 0) {

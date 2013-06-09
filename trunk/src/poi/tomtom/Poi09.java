@@ -248,7 +248,8 @@ and then                        : station
 	 *
 	 * @return decoded description
 	 */
-	public String decode() {
+	@Override
+	protected String decode(byte[] name) {
 		// return new Enc09.decode(description);
 		Bit bit = new Bit(new BitContainer(name, true), 0);
 		StringBuffer result = new StringBuffer();
