@@ -12,7 +12,7 @@ The format is the following :
   <tr><td>4 bytes</td><td>S: the total size of this record in bytes</td></tr>
   <tr><td>4 bytes</td><td>X: {@link #longitude Longitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
   <tr><td>4 bytes</td><td>Y: {@link #latitude Latitude} (in decimal degrees). This value has to be divide by 100000</td></tr>
-  <tr><td>N bytes</td><td>Plain text {@link #description POI description}</td></tr>
+  <tr><td>S-13 bytes</td><td>N: Plain text {@link #description POI description}</td></tr>
 </table>
 
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
