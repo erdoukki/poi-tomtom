@@ -27,7 +27,7 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 
 	private int longitude;
 	private int latitude;
-	private byte[] name = new byte[] {0};
+	protected byte[] name = new byte[] {0};
 
 	public Poi02(int type, PoiContainer parent) {
 		super(type, parent);
@@ -74,6 +74,9 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 		super.setSize(this.name.length + HEADER);
 	}
 
+	byte[] name() {
+		return name;
+	}
 	public void setName(byte[] name) {
 		this.name = name;
 		super.setSize(this.name.length + HEADER);

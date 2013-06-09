@@ -59,6 +59,9 @@ public class Poi07 extends Poi04 {
 		super.setSize(this.name.length + HEADER);
 	}
 
+	byte[] name() {
+		return name;
+	}
 	public void setName(byte[] name) {
 		this.name = name;
 		super.setSize(this.name.length + HEADER);
