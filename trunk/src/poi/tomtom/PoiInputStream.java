@@ -12,6 +12,11 @@ import java.util.Map;
  */
 public class PoiInputStream extends InputStream {
 
+	public enum Mode {
+		OV2, DAT
+	}
+
+	private final Mode mode;
 	/** underlying stream */
 	private final InputStream in;
 	/** peeked byte */
@@ -20,7 +25,12 @@ public class PoiInputStream extends InputStream {
 	private Map<PoiContainer, Integer> parents;
 
 	public PoiInputStream(InputStream in) {
+		this(in, Mode.OV2);
+	}
+
+	public PoiInputStream(InputStream in, Mode mode) {
 		this.in = in;
+		this.mode = mode;
 		parents = new LinkedHashMap<PoiContainer, Integer>();
 	}
 
@@ -31,7 +41,7 @@ public class PoiInputStream extends InputStream {
 		return null;
 	}
 
-	private void addParent(Poi01 parent, int length) {
+	private void addParent(PoiContainer parent, int length) {
 		parents.put(parent, length);
 	}
 
@@ -53,7 +63,14 @@ public class PoiInputStream extends InputStream {
 	public <P extends Poi> P readPoi() throws IOException {
 		byte type = peekByte();
 
+		if ((mode == Mode.DAT) && (getParent() == null)) {
+			type = Category.TYPE_CATEGORIES;
+		}
+
 		switch (type) {
+			case Category.TYPE_CATEGORIES: {
+				return (P) readCategory(type);
+			}
 			case Poi01.TYPE_01: {
 				return (P) readPoi01(type);
 			}
@@ -105,6 +122,27 @@ public class PoiInputStream extends InputStream {
 				String.format("invalid type code: %02X", type));
 			}
 		}
+	}
+
+	private Pois readCategory(byte type) throws IOException {
+		Pois pois = new Category(type, getParent());
+		int count = readInt();
+		for (int i = 0; i < count; i++) {
+			Category category = new Category(Category.TYPE_CATEGORY, pois);
+			int id = readInt();
+			category.setCategoryId(id);
+			pois.add(category);
+		}
+		// TODO what if 13
+		int offset = readInt(); 
+		for (Poi category: pois) {
+			int catOffset = readInt();
+			int size = catOffset - offset;
+			offset = catOffset;
+			addParent((PoiContainer) category, size);
+			/**/System.out.println(size + " - " + category);
+		}
+		return pois;
 	}
 
 	private Poi01 readPoi01(int type) throws IOException {
@@ -270,7 +308,7 @@ public class PoiInputStream extends InputStream {
 	private Poi13 readPoi13(int type) throws IOException {
 		Poi13 poi = new Poi13(type, getParent());
 		type = readByte();
-		int size = readInt();
+		int size = readByte();
 		poi.setSize(size);
 		int longitude = readInt();
 		poi.setLon(longitude);
@@ -281,7 +319,7 @@ public class PoiInputStream extends InputStream {
 		byte[] unknown = poi.getUnknown();
 		if (unknown != null) {
 			read(unknown);
-			poi.setName(unknown);
+			poi.setUnknown(unknown);
 		}
 		byte[] name = poi.name();
 		read(name);
