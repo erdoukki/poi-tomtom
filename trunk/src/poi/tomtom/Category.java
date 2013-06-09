@@ -129,52 +129,6 @@ public class Category extends Pois {
 	public void setCategoryId(int categoryId) {
 		this.categoryId = categoryId;
 	}
-	
-//	protected int readData(InputStream is) throws IOException {
-//		boolean endOffs = true;
-//		int cats = readN(is, 4);
-//		int size = 4;
-//		if (cats == PoiDictionary.POIS) {
-//			endOffs = false;
-//			size = PoiFactory.poi(PoiDictionary.POIS, this).read(is);
-//			cats = readN(is, 4);
-//			size += 4;
-//			// log.debug("cats: 0x" + Integer.toHexString(cats));
-//		} else {
-//			//log.debug("cats: 0x" + Integer.toHexString(cats) + " is not EQ " + Integer.toHexString(PoiDictionary.POIS));
-//			Poi29.putAll();
-//		}
-//		for (int i = 0; i < cats; i++) {
-//			PoiCategory category = (PoiCategory)PoiFactory.poi(PoiCategory.CATEGORY, this);
-//			size += category.read(is);
-//			//PoiFactory.log.debug("category: 0x" + Integer.toHexString(category.categoryId()) + ": " + category.toString());
-//			records.add(category);
-//		}
-//		int[] catOffset = new int[cats + 1];
-//		for (int i = 0; i < cats; i++) {
-//			catOffset[i] = readN(is, 4);
-//			size += 4;
-//			//log.debug("offset: 0x" + Integer.toHexString(catOffset[i]));
-//		}
-//		if (endOffs) {
-//			catOffset[cats] = readN(is, 4);
-//			size += 4;
-//			//log.debug("last: 0x" + Integer.toHexString(catOffset[cats]));
-//		} else {
-//			catOffset[cats] = -1;
-//		}
-//		for (int i = 0; i < records.size(); i++) {
-//			Category category = (Category)records.get(i);
-//			if (endOffs) {
-//				log.debug(Integer.toHexString(category.offset()) + ", " + Integer.toHexString(catOffset[i+1] - catOffset[i]) + ": " + category.toString());
-//				category.size(category.read(is, (long)catOffset[i+1] - catOffset[i]));
-//			} else {
-//				log.debug(Integer.toHexString(category.offset()) + ", " + Integer.toHexString(catOffset[i]) + ": " + category.toString());
-//				category.size(category.read(is, (long)catOffset[i]));
-//			}
-//		}
-//		return size;
-//	}
 
 	@Override
 	public String toString() {

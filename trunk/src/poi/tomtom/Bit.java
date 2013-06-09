@@ -21,7 +21,7 @@ public class Bit {
 	}
 
 	public boolean isLast() {
-		return index > bits.start() + bits.length() - 1;
+		return index > (bits.start() + bits.length() - 1);
 	}
 
 	void inc() {

@@ -204,6 +204,6 @@ and then                        : station
 
 	@Override
 	public String toString() {
-		return "Poi13 [S:" + size() + ", lon:" + getLon() + ", lat:" + getLat() + ", c:" + getCode() + ", u:" + hex(unknown) + ", n:" + getName() + "]";
+		return "Poi13 [S:" + size() + ", lon:" + getLon() + ", lat:" + getLat() + ", c:" + getCode() + ", u:" + (unknown==null?null:hex(unknown)) + ", n:" + getName() + "]";
 	}
 }
