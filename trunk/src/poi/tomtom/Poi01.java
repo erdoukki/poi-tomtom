@@ -32,7 +32,6 @@ public class Poi01 extends Pois implements AreaRecord {
 
 	protected Poi01(int type, PoiContainer parent) {
 		super(type, parent);
-		setSize(SIZE);
 	}
 
 	@Override

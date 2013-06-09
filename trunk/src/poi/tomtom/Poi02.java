@@ -31,8 +31,6 @@ public class Poi02 extends PoiCommon implements PoiRecord {
 
 	public Poi02(int type, PoiContainer parent) {
 		super(type, parent);
-		/** T, L, X, Y, N */
-		setSize(HEADER + name.length);
 	}
 
 	@Override

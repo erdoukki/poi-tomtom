@@ -9,7 +9,7 @@ The Format is the following :
 <table border="1">
   <tr><th width=110>Bytes</th><th>Description</th></tr>
   <tr><td>1 byte</td><td>T: The Record Type = <b>0x0C</b> or <b>0x1C</b></td></tr>
-  <tr><td>1 bytes</td><td>N: the size of this record, minus 8 (the size of the fixed part of the record)</td></tr>
+  <tr><td>1 bytes</td><td>S: the size of this record, minus 8 (the size of the fixed part of the record)</td></tr>
   <tr><td>3 bytes</td><td>X: {@link PoiRec04#longitude Encoded Longitude}</a></td></tr>
   <tr><td>3 bytes</td><td>Y: {@link PoiRec04#latitude Encoded Latitude}</a></td></tr>
   <tr><td>S bytes</td><td>N: {@link #description encoded POI description}</td></tr>

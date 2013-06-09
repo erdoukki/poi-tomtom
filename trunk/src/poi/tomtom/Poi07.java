@@ -31,13 +31,17 @@ public class Poi07 extends Poi04 {
 	 */
 	protected Poi07(int type, PoiContainer parent) {
 		super(type, parent);
-		setSize(HEADER + name.length);
+	}
+
+	@Override
+	public int size() {
+		return super.size() - HEADER;
 	}
 
 	@Override
 	public void setSize(int length) {
-		name = new byte[length - HEADER];
-		super.setSize(length);
+		name = new byte[length];
+		super.setSize(length + HEADER);
 	}
 
 	/**

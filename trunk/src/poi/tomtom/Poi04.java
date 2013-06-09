@@ -31,7 +31,6 @@ public class Poi04 extends PoiCommon implements PoiRecord {
 	 */
 	public Poi04(int type, PoiContainer parent) {
 		super(type, parent);
-		setSize(SIZE);
 	}
 
 	@Override
