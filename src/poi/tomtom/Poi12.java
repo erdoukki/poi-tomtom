@@ -129,9 +129,10 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 	 *
 	 * @return decoded description
 	 */
-	public String description() {
+	@Override
+	protected String decode(byte[] name) {
 		StringBuffer result = new StringBuffer();
-		StringBuffer temp = reverseString();
+		StringBuffer temp = reverseString(name);
 		// log.debig(temp);
 		/** leters */
 		while (temp.length() > 4) {
@@ -162,7 +163,7 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 		return result.toString();
 	}
 
-	private StringBuffer reverseString() {
+	private StringBuffer reverseString(byte[] name) {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < name.length; i++) {
 			String s = Integer.toBinaryString(name[i] & 0xff);

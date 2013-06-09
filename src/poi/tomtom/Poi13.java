@@ -114,6 +114,9 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	 * @return decoded description
 	 */
 	public String getName() {
+		if (code == 6) {
+			return super.decode(name);
+		}
 		return decode(name);
 	}
 
@@ -166,10 +169,8 @@ and then                        : station
 	 *
 	 * @return decoded description
 	 */
-	public String decode() {
-		if (code == 6) {
-			return new String(name);
-		}
+	@Override
+	protected String decode(byte[] name) {
 		Bit bit = new Bit(new BitContainer(name,true), 0);
 		StringBuffer result = new StringBuffer();
 		try {
