@@ -1,17 +1,23 @@
 package poi.tomtom;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
-public abstract class Pois extends PoiCommon implements PoiContainer {
+public abstract class Pois extends PoiCommon implements PoiContainer, Iterable<Poi> {
 
 	private List<Poi> records = new ArrayList<Poi>();
 
 	protected Pois(int type, PoiContainer parent) {
 		super(type, parent);
+	}
+
+	@Override
+	public Iterator<Poi> iterator() {
+		return records.iterator();
 	}
 
 	/**
@@ -28,6 +34,14 @@ public abstract class Pois extends PoiCommon implements PoiContainer {
 	}
 
 	public boolean add(Poi poi) {
+		if (poi instanceof PoiRecord) {
+			return add((PoiRecord) poi);
+		}
+		add(count(),poi);
+		return true;
+	}
+
+	public boolean add(PoiRecord poi) {
 		Poi01 root = null;
 		for (int i = 0; i < records.size(); i++) {
 			if (records.get(i) instanceof Poi01) {
@@ -37,10 +51,10 @@ public abstract class Pois extends PoiCommon implements PoiContainer {
 		}
 		if (root == null) {
 			root = new Poi01((byte)1, this);
-			root.setLat1(((PoiRecord)poi).getLat());
-			root.setLon1(((PoiRecord)poi).getLon());
-			root.setLat2(((PoiRecord)poi).getLat());
-			root.setLon2(((PoiRecord)poi).getLon());
+			root.setLat1(poi.getLat());
+			root.setLon1(poi.getLon());
+			root.setLat2(poi.getLat());
+			root.setLon2(poi.getLon());
 			setSize(size() + root.size());
 			records.add(count(), root);
 		}
