@@ -26,6 +26,8 @@ public class PoiInputStream extends InputStream {
 	/** parents map */
 	private Map<PoiContainer, Integer> parents;
 
+	private Dictionary dict;
+
 	public PoiInputStream(InputStream in) {
 		this(in, Mode.OV2);
 	}
@@ -34,8 +36,6 @@ public class PoiInputStream extends InputStream {
 		this.in = in;
 		this.mode = mode;
 		parents = new LinkedHashMap<PoiContainer, Integer>();
-		// TODO fix it
-		Poi13.tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
 	}
 
 	private PoiContainer getParent() {
@@ -67,10 +67,11 @@ public class PoiInputStream extends InputStream {
 
 	@SuppressWarnings("unchecked")
 	public <P extends Poi> P readPoi() throws IOException {
-		byte type = peekByte();
-
+		byte type;
 		if ((mode == Mode.DAT) && (getParent() == null)) {
 			type = Category.TYPE_CATEGORIES;
+		} else {
+			type = peekByte();
 		}
 
 		switch (type) {
@@ -130,9 +131,21 @@ public class PoiInputStream extends InputStream {
 		}
 	}
 
+	private int readPOIS() throws IOException {
+		int count = readInt();
+		if (count == Dictionary.POIS) {
+			dict = new Dictionary();
+			dict.read(this);
+			count = readInt();
+		} else {
+			Poi13.tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
+		}
+		return count;
+	}
+
 	private Pois readCategory(byte type) throws IOException {
 		Pois pois = new Category(type, getParent());
-		int count = readInt();
+		int count = readPOIS();
 		for (int i = 0; i < count; i++) {
 			Category category = new Category(Category.TYPE_CATEGORY, pois);
 			int id = readInt();
@@ -140,14 +153,21 @@ public class PoiInputStream extends InputStream {
 			pois.add(category);
 		}
 		Map<PoiContainer, Integer> stack = new LinkedHashMap<PoiContainer, Integer>();
-		// TODO what if 13
-		int offset = readInt(); 
-		for (Poi category: pois) {
-			int catOffset = readInt();
-			int size = catOffset - offset;
-			offset = catOffset;
-			stack.put((PoiContainer) category, size);
-			/**/System.out.println(size + " - " + category);
+		if (dict == null) {
+			int offset = readInt(); 
+			for (Poi category: pois) {
+				int catOffset = readInt();
+				int size = catOffset - offset;
+				offset = catOffset;
+				stack.put((PoiContainer) category, size);
+				/**/System.out.println(size + " - " + category);
+			}
+		} else {
+			for (Poi category: pois) {
+				int size = readInt();
+				stack.put((PoiContainer) category, size);
+				/**/System.out.println(size + " - " + category);
+			}
 		}
 		/** reverse categories to parents */
 		while (stack.size() > 0) {
@@ -166,7 +186,7 @@ public class PoiInputStream extends InputStream {
 		Poi01 poi = new Poi01(type, getParent());
 		type = readByte();
 		int size = readInt();
-		//poi.setLength(length);
+		poi.setSize(size);
 		int longitude1 = readInt();
 		poi.setLon1(longitude1);
 		int latitude1 = readInt();
