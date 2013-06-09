@@ -20,7 +20,7 @@ The Format is the following :
 
 * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
 */
-public class Poi13 extends Poi02 {
+public class Poi13 extends PoiCommon implements PoiRecord {
 
 	public static final int TYPE_1D = 29;
 
@@ -29,6 +29,8 @@ public class Poi13 extends Poi02 {
 	 */
 	public static final int SIZE = 11;
 
+	private int longitude;
+	private int latitude;
 	/**
 	 * unknown code.
 	 * Describes how many of the first bytes of the description are .... <i>(unknown! probably related with crpoi.dat)</i>
@@ -44,6 +46,7 @@ public class Poi13 extends Poi02 {
 	 */
 	private byte code;
 	private byte[] unknown;
+	private byte[] name = new byte[] {0};
 
 	protected static final BinaryTree<String> tree = new BinaryTree<String>();
 
@@ -52,6 +55,7 @@ public class Poi13 extends Poi02 {
 	 */
 	public Poi13(int type, PoiContainer parent) {
 		super(type, parent);
+		//TODO setSize(SIZE);
 	}
 
 	@Override
@@ -74,8 +78,22 @@ public class Poi13 extends Poi02 {
 				name = new byte[size - 4];
 				break;
 		}
+		super.setSize(size);
 	}
-
+	@Override
+	public int getLon() {
+		return longitude;
+	}
+	public void setLon(int longitude) {
+		this.longitude = longitude;
+	}
+	@Override
+	public int getLat() {
+		return latitude;
+	}
+	public void setLat(int latitude) {
+		this.latitude = latitude;
+	}
 	public byte getCode() {
 		return code;
 	}
@@ -88,6 +106,33 @@ public class Poi13 extends Poi02 {
 	}
 	public void setUnknown(byte[] unknown) {
 		this.unknown = unknown;
+	}
+
+	/**
+	 * Decodes POI description.
+	 *
+	 * @return decoded description
+	 */
+	public String getName() {
+		return decode(name);
+	}
+
+	/**
+	 * Encodes POI description.
+	 *
+	 * @return decoded description
+	 */
+	public void setName(String name, CharMode charMode) {
+		this.name = encode(name, charMode);
+		//TODO super.setSize(this.name.length + HEADER);
+	}
+
+	byte[] name() {
+		return name;
+	}
+	public void setName(byte[] name) {
+		this.name = name;
+		//TODO super.setSize(this.name.length + HEADER);
 	}
 
 	/**
