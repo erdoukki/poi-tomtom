@@ -1,9 +1,11 @@
 package poi.tomtom;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StreamCorruptedException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,13 +34,17 @@ public class PoiInputStream extends InputStream {
 		this.in = in;
 		this.mode = mode;
 		parents = new LinkedHashMap<PoiContainer, Integer>();
+		// TODO fix it
+		Poi13.tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
 	}
 
 	private PoiContainer getParent() {
-		if (parents.size() > 0) {
-			return parents.keySet().iterator().next();
+		Iterator<PoiContainer> i = parents.keySet().iterator();
+		PoiContainer result = null;
+		while (i.hasNext()) {
+			result  = i.next();
 		}
-		return null;
+		return result;
 	}
 
 	private void addParent(PoiContainer parent, int length) {
@@ -133,14 +139,25 @@ public class PoiInputStream extends InputStream {
 			category.setCategoryId(id);
 			pois.add(category);
 		}
+		Map<PoiContainer, Integer> stack = new LinkedHashMap<PoiContainer, Integer>();
 		// TODO what if 13
 		int offset = readInt(); 
 		for (Poi category: pois) {
 			int catOffset = readInt();
 			int size = catOffset - offset;
 			offset = catOffset;
-			addParent((PoiContainer) category, size);
+			stack.put((PoiContainer) category, size);
 			/**/System.out.println(size + " - " + category);
+		}
+		/** reverse categories to parents */
+		while (stack.size() > 0) {
+			Iterator<PoiContainer> i = stack.keySet().iterator();
+			PoiContainer category = null;
+			while (i.hasNext()) {
+				category = i.next();
+			}
+			addParent(category, stack.get(category));
+			stack.remove(category);
 		}
 		return pois;
 	}
