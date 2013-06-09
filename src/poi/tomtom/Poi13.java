@@ -27,7 +27,7 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	/**
 	 * size length in bytes.
 	 */
-	public static final int SIZE = 11;
+	public static final int HEADER = 11;
 
 	private int longitude;
 	private int latitude;
@@ -55,30 +55,34 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	 */
 	public Poi13(int type, PoiContainer parent) {
 		super(type, parent);
-		//TODO setSize(SIZE);
 	}
 
 	@Override
-	public void setSize(int size) {
+	public int size() {
+		return super.size() - HEADER;
+	}
+
+	@Override
+	public void setSize(int length) {
 		switch (code & 3) { // 000000xx
 			case 0:
 				unknown = null;
-				name = new byte[size];
+				name = new byte[length];
 				break;
 			case 1:
 				unknown = new byte[1];
-				name = new byte[size - 1];
+				name = new byte[length - 1];
 				break;
 			case 2:
 				unknown = new byte[3];
-				name = new byte[size - 3];
+				name = new byte[length - 3];
 				break;
 			case 3:
 				unknown = new byte[4];
-				name = new byte[size - 4];
+				name = new byte[length - 4];
 				break;
 		}
-		super.setSize(size);
+		super.setSize(length + HEADER);
 	}
 	@Override
 	public int getLon() {
@@ -106,6 +110,7 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	}
 	public void setUnknown(byte[] unknown) {
 		this.unknown = unknown;
+		super.setSize(this.name.length + (unknown != null?unknown.length:0) + HEADER);
 	}
 
 	/**
@@ -127,7 +132,7 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	 */
 	public void setName(String name, CharMode charMode) {
 		this.name = encode(name, charMode);
-		//TODO super.setSize(this.name.length + HEADER);
+		super.setSize(this.name.length + (unknown != null?unknown.length:0) + HEADER);
 	}
 
 	byte[] name() {
@@ -135,7 +140,7 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	}
 	public void setName(byte[] name) {
 		this.name = name;
-		//TODO super.setSize(this.name.length + HEADER);
+		super.setSize(this.name.length + (unknown != null?unknown.length:0) + HEADER);
 	}
 
 	/**
