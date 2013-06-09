@@ -36,7 +36,6 @@ public class Poi64 extends PoiCommon implements Poi {
 
 	public Poi64(int type, PoiContainer parent) {
 		super(type, parent);
-		setSize(SIZE);
 	}
 	
 	public byte[] getUnknown1() {

@@ -30,7 +30,6 @@ public class Poi06 extends Poi04 {
 	 */
 	protected Poi06(int type, PoiContainer parent) {
 		super(type, parent);
-		setSize(SIZE);
 	}
 
 	public int getName() {
