@@ -94,6 +94,9 @@ public class PoiInputStream extends InputStream {
 			case Poi12.TYPE_1C: {
 				return (P) readPoi12(type);
 			}
+			case Poi13.TYPE_1D: {
+				return (P) readPoi13(type);
+			}
 			case Poi64.TYPE_64: {
 				return (P) readPoi64(type);
 			}
@@ -131,8 +134,8 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi02.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(size);
@@ -188,8 +191,8 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi07.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(poi.size());
@@ -205,8 +208,8 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi08.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(poi.size());
@@ -222,8 +225,8 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi09.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(poi.size());
@@ -239,8 +242,8 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi10.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(poi.size());
@@ -256,11 +259,35 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
-		byte[] name = new byte[size - Poi12.HEADER];
-		read(name, 0, name.length);
+		byte[] name = poi.name();
+		read(name);
 		poi.setName(name);
 
 		addChild(poi.size());
+		return poi;
+	}
+
+	private Poi13 readPoi13(int type) throws IOException {
+		Poi13 poi = new Poi13(type, getParent());
+		type = readByte();
+		int size = readInt();
+		poi.setSize(size);
+		int longitude = readInt();
+		poi.setLon(longitude);
+		int latitude = readInt();
+		poi.setLat(latitude);
+		byte code = readByte();
+		poi.setCode(code);
+		byte[] unknown = poi.getUnknown();
+		if (unknown != null) {
+			read(unknown);
+			poi.setName(unknown);
+		}
+		byte[] name = poi.name();
+		read(name);
+		poi.setName(name);
+
+		addChild(size);
 		return poi;
 	}
 
@@ -270,17 +297,17 @@ public class PoiInputStream extends InputStream {
 		int size = readInt();
 		poi.setSize(size);
 		byte[] unknown1 = poi.getUnknown1();
-		read(unknown1, 0, Poi64.UNKNOWN1);
+		read(unknown1);
 		//log.debug(hex(unknown1));
 		int version = readInt();
 		poi.setVersion(version);
 		byte[] unknown2 = poi.getUnknown2();
-		read(unknown2, 0, Poi64.UNKNOWN2);
+		read(unknown2);
 		//log.debug(hex(unknown2));
 		byte check = readByte();
 		poi.setCheck(check);
 		byte[] unknown3 = poi.getUnknown3();
-		read(unknown3, 0, Poi64.UNKNOWN3);
+		read(unknown3);
 		//log.debug(hex(unknown3));
 
 		addChild(size);
