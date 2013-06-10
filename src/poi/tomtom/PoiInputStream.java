@@ -366,7 +366,7 @@ public class PoiInputStream extends InputStream {
 		poi.setLon(longitude);
 		int latitude = readInt();
 		poi.setLat(latitude);
-		byte code = readByte();
+		int code = readByte();
 		poi.setCode(code);
 		byte[] unknown = poi.getUnknown();
 		if (unknown != null) {
@@ -395,7 +395,7 @@ public class PoiInputStream extends InputStream {
 		byte[] unknown2 = poi.getUnknown2();
 		read(unknown2);
 		//log.debug(hex(unknown2));
-		byte check = readByte();
+		int check = readByte();
 		poi.setCheck(check);
 		byte[] unknown3 = poi.getUnknown3();
 		read(unknown3);
@@ -491,12 +491,12 @@ public class PoiInputStream extends InputStream {
 		return false;
 	}
 
-	public byte readByte() throws IOException {
+	public int readByte() throws IOException {
 		int v = read();
 		if (v < 0) {
 			throw new EOFException();
 		}
-		return (byte) v;
+		return v;
 	}
 
 	public int readInt() throws IOException {
