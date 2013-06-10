@@ -51,16 +51,19 @@ public class PoiInputStream extends InputStream {
 		parents.put(parent, length);
 	}
 
-	private void addChild(int size) {
-		PoiContainer parent = getParent();
-		if (parent != null) {
+	private void addChild(PoiContainer parent, int size) {
+		if ((parent != null) && (parents.get(parent) != null)) {
 			int rest = parents.get(parent) - size;
 			if (rest > 0) {
 				parents.put(parent, rest);
 			} else if (rest == 0) {
 				parents.remove(parent);
 			} else {
-				//log.error("Unread " + rest + " bytes from " + parent);
+				parents.remove(parent);
+//				log.error("Unread " + rest + " bytes from " + parent);
+			}
+			if (parent instanceof PoiCommon) {
+				addChild(((PoiCommon)parent).getParent(), size);
 			}
 		}
 	}
@@ -166,7 +169,7 @@ public class PoiInputStream extends InputStream {
 			for (Poi category: pois) {
 				int size = readInt();
 				stack.put((PoiContainer) category, size);
-				/**/System.out.println(size + " - " + category);
+				//log.debug(size + " - " + category);
 			}
 		}
 		/** reverse categories to parents */
@@ -183,7 +186,8 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Poi01 readPoi01(int type) throws IOException {
-		Poi01 poi = new Poi01(type, getParent());
+		PoiContainer parent = getParent();
+		Poi01 poi = new Poi01(type, parent);
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
@@ -196,12 +200,14 @@ public class PoiInputStream extends InputStream {
 		int latitude2 = readInt();
 		poi.setLat2(latitude2);
 
-		addParent(poi, size - poi.size());
+		addParent(poi, size - Poi01.SIZE);
+		addChild(parent, Poi01.SIZE);
 		return poi;
 	}
 
 	private Poi02 readPoi02(int type) throws IOException {
-		Poi02 poi = new Poi02(type, getParent());
+		PoiContainer parent = getParent();
+		Poi02 poi = new Poi02(type, parent);
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
@@ -213,24 +219,26 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(size);
+		addChild(parent, size);
 		return poi;
 	}
 
 	private Poi04 readPoi04(int type) throws IOException {
-		Poi04 poi = new Poi04(type, getParent());
+		PoiContainer parent = getParent();
+		Poi04 poi = new Poi04(type, parent);
 		type = readByte();
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
 		poi.setLat(latitude);
 
-		addChild(poi.size());
+		addChild(parent, poi.size());
 		return poi;
 	}
 
 	private Poi05 readPoi05(int type) throws IOException {
-		Poi05 poi = new Poi05(type, getParent());
+		PoiContainer parent = getParent();
+		Poi05 poi = new Poi05(type, parent);
 		type = readByte();
 		int longitude = readInt3();
 		poi.setLon(longitude);
@@ -239,12 +247,13 @@ public class PoiInputStream extends InputStream {
 		int name = readInt2();
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size());
 		return poi;
 	}
 
 	private Poi06 readPoi06(int type) throws IOException {
-		Poi06 poi = new Poi06(type, getParent());
+		PoiContainer parent = getParent();
+		Poi06 poi = new Poi06(type, parent);
 		type = readByte();
 		int longitude = readInt3();
 		poi.setLon(longitude);
@@ -253,12 +262,13 @@ public class PoiInputStream extends InputStream {
 		int name = readInt3();
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size());
 		return poi;
 	}
 
 	private Poi07 readPoi07(int type) throws IOException {
-		Poi07 poi = new Poi07(type, getParent());
+		PoiContainer parent = getParent();
+		Poi07 poi = new Poi07(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -270,12 +280,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size() + Poi07.HEADER);
 		return poi;
 	}
 
 	private Poi08 readPoi08(int type) throws IOException {
-		Poi08 poi = new Poi08(type, getParent());
+		PoiContainer parent = getParent();
+		Poi08 poi = new Poi08(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -287,12 +298,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size() + Poi07.HEADER);
 		return poi;
 	}
 
 	private Poi09 readPoi09(int type) throws IOException {
-		Poi09 poi = new Poi09(type, getParent());
+		PoiContainer parent = getParent();
+		Poi09 poi = new Poi09(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -304,12 +316,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size() + Poi07.HEADER);
 		return poi;
 	}
 
 	private Poi10 readPoi10(int type) throws IOException {
-		Poi10 poi = new Poi10(type, getParent());
+		PoiContainer parent = getParent();
+		Poi10 poi = new Poi10(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -321,12 +334,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size() + Poi07.HEADER);
 		return poi;
 	}
 
 	private Poi12 readPoi12(int type) throws IOException {
-		Poi12 poi = new Poi12(type, getParent());
+		PoiContainer parent = getParent();
+		Poi12 poi = new Poi12(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -338,12 +352,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(poi.size());
+		addChild(parent, poi.size() + Poi07.HEADER);
 		return poi;
 	}
 
 	private Poi13 readPoi13(int type) throws IOException {
-		Poi13 poi = new Poi13(type, getParent());
+		PoiContainer parent = getParent();
+		Poi13 poi = new Poi13(type, parent);
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -362,12 +377,13 @@ public class PoiInputStream extends InputStream {
 		read(name);
 		poi.setName(name);
 
-		addChild(size);
+		addChild(parent, poi.size() + Poi13.HEADER);
 		return poi;
 	}
 
 	private Poi64 readPoi64(int type) throws IOException {
-		Poi64 poi = new Poi64(type, getParent());
+		PoiContainer parent = getParent();
+		Poi64 poi = new Poi64(type, parent);
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
@@ -385,7 +401,7 @@ public class PoiInputStream extends InputStream {
 		read(unknown3);
 		//log.debug(hex(unknown3));
 
-		addChild(size);
+		addChild(parent, size);
 		return poi;
 	}
 
