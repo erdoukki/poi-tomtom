@@ -44,7 +44,7 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 </table>
 	 * 
 	 */
-	private byte code;
+	private int code;
 	private byte[] unknown;
 	private byte[] name = new byte[] {0};
 
@@ -98,10 +98,10 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	public void setLat(int latitude) {
 		this.latitude = latitude;
 	}
-	public byte getCode() {
+	public int getCode() {
 		return code;
 	}
-	public void setCode(byte code) {
+	public void setCode(int code) {
 		this.code = code;
 		setSize(size());
 	}

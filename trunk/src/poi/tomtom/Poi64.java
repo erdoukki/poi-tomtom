@@ -31,7 +31,7 @@ public class Poi64 extends PoiCommon implements Poi {
 	private byte[] unknown1 = new byte[UNKNOWN1];
 	private int version;
 	private byte[] unknown2 = new byte[UNKNOWN2];
-	private byte check;
+	private int check;
 	private byte[] unknown3 = new byte[UNKNOWN3];
 
 	public Poi64(int type, PoiContainer parent) {
@@ -59,7 +59,7 @@ public class Poi64 extends PoiCommon implements Poi {
 	public int getCheck() {
 		return check;
 	}
-	public void setCheck(byte check) {
+	public void setCheck(int check) {
 		this.check = check;
 	}
 	public byte[] getUnknown3() {
