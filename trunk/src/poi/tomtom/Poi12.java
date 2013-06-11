@@ -133,13 +133,13 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 	protected String decode(byte[] name) {
 		StringBuffer result = new StringBuffer();
 		StringBuffer temp = reverseString(name);
-		// log.debig(temp);
+		// log.debug(temp);
 		/** leters */
 		while (temp.length() > 4) {
 			String key = temp.substring(temp.length() - 5);
-			// log.debig(key);
+			// log.debug(key);
 			int i = Integer.parseInt(key, 2);
-			// log.debig(i);
+			// log.debug(i);
 			// System.out.println(letters[i]);
 			result.append(letters[i]);
 			temp.delete(temp.length() - 5, temp.length());
@@ -150,13 +150,13 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 		/** digits */
 		while (temp.length() > 3) {
 			String key = temp.substring(temp.length() - 4);
-			// log.debig(key);
+			// log.debug(key);
 			int i = Integer.parseInt(key, 2);
 			if (i == 0) {
 				break;
 			}
-			// log.debig(i);
-			// log.debig(letters[i]);
+			// log.debug(i);
+			// log.debug(letters[i]);
 			result.append(digits[i - 1]);
 			temp.delete(temp.length() - 4, temp.length());
 		}
@@ -167,9 +167,9 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < name.length; i++) {
 			String s = Integer.toBinaryString(name[i] & 0xff);
-			// log.debig(s);
+			// log.debug(s);
 			s = "00000000".substring(s.length()) + s;
-			// log.debig(s);
+			// log.debug(s);
 			result.insert(0, s);
 		}
 		return result;
