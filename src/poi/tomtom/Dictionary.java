@@ -1,15 +1,12 @@
 package poi.tomtom;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
 <h3>Dictionary.</h3>
 
-This is a structure of dictionary used to decode {@link PoiRec29 Record 29}.
+This is a structure of dictionary used to decode {@link Poi13 Record 13}.
 <p>
 <table border="1">
   <tr><th width=110>bytes</th><th>description</th></tr>
@@ -19,7 +16,8 @@ This is a structure of dictionary used to decode {@link PoiRec29 Record 29}.
   <tr><td>2 bytes</td><td><b>K</b>: size in bytes of keys description</td></tr>
   <tr><td>2 bytes</td><td><b>N</b>: keys number. <b>X</b> letters + <tt><b>0x200</b></tt> entries</td></tr>
   <tr><td>K bytes</td><td>keys description</td></tr>
-  <tr><td>3 bytes</td><td><tt><b>01 01 0a (last byte may be {@link #STR_LEN STR_LEN})</b></tt></td></tr>
+  <tr><td>2 bytes</td><td><tt><b>01 01</b></tt></td></tr>
+  <tr><td>1 byte</td><td><tt><b><B>S</B>: string size length in bits.</b></tt></td></tr>
   <tr><td>1 byte</td><td><b>B</b>: number of bits per char</td></tr>
   <tr><td>4 byte</td><td><b>A</b>: id value of biggest single char</td></tr>
   <tr><td>4 byte</td><td>unknown</td></tr>
@@ -40,7 +38,7 @@ The keys are described in a pair of data:
 </ul>
 The first key is composed by the first few set bits, without the follows clear bit at the end.
 <br/>
-The <b>id</b> of first key is <tt><b>0000000000</b></tt>. The first key is <b>&lt;end-of-string&gt;</b> for the {@link PoiRec29 Record 29} description.
+The <b>id</b> of first key is <tt><b>0000000000</b></tt>. The first key is <b>&lt;end-of-string&gt;</b> for the {@link Poi13 Record 13} description.
 <p/>
 Each other key is composed by the bits of previous key next to the last set bit and concatenated with reversed order bits of appendix of the current key.
 <br/>
@@ -72,7 +70,7 @@ The entry is a string composed by ASCII chars with fixed <b>B</b> number of bits
 <br/>
 On that manner the entry is a pair of a key and a string: <tt>010000110</tt> - <tt>"station"</tt>
 <p/>
-Both, letters and entries, with the keys, present a dictionary table used to decode the {@link PoiRec29 Record 29} description. It is similar to the table of the {@link PoiRec09 Record 09}.
+Both, letters and entries, with the keys, present a dictionary table used to decode the {@link Poi13 Record 13} description. It is similar to the table of the {@link PoiRec09 Record 09}.
 
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
@@ -95,36 +93,39 @@ public class Dictionary {
 	public static final byte[] UNKNOWN1 = {0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 	 /**
-	  * unknown2 length in bytes.
+	  * unknown2.
 	  * <br/>
-	  * <tt>01 01 0a</tt>
+	  * <tt>01</tt>
 	  */
-	public static final byte[] UNKNOWN2 = {0x01, 0x01, 0x0a};
+	public static final byte UNKNOWN2 = 1;
 
-	/** unknown3 length in bytes */
-	public static final int UNKNOWN3 = 4;
+	 /**
+	  * unknown3.
+	  * <br/>
+	  * <tt>01</tt>
+	  */
+	public static final byte UNKNOWN3 = 1;
 
 	/**
-	 * unknown4 length in bits.
+	 * unknown5 length in bits.
 	 * <br/>
 	 * <table>
-	 * <tr><th><tt>00      </tt></th><th><tt>02      </tt></th><th><tt>x8</tt></th></tr>
-	 * <tr><td><tt>00000000</tt></td><td><tt>01000000</tt></td><td><tt>0001xxxx</tt></td></tr>
+	 * <tr><td><tt>0000000001</tt></td><td><tt>0000000001</tt></td></tr>
 	 * </table>
 	 */
-	public static final String UNKNOWN4 = "00000000010000000001";
-
-	/** string size length in bits. */
-	public static final int STR_LEN = 10;
+	public static final String UNKNOWN5 = "00000000010000000001";
 
 	/** id length in bits. */
 	private int idLen;
 
-	/** keys header length in bytes. */
-	private int headerLen;
+	/** keys description */
+	byte[] keysBuff;
 
 	/** number of keys. */
 	private int keyNum;
+
+	/** string size length in bits. */
+	public int strLen;
 
 	/** size of a char in bits. */
 	private int chSize;
@@ -132,8 +133,10 @@ public class Dictionary {
 	/** id value of biggest single char. */
 	private int ascii;
 
-	/** entries header length in bytes. */
-	private int dictLen;
+	/** entries description */
+	byte[] dictBuff;
+
+	private BinaryTree<String> tree;
 
 	/** parse keys. */
 	private SortedMap<Integer, BitContainer> readKeys(BitContainer bits) {
@@ -173,7 +176,7 @@ public class Dictionary {
 					s = Character.toString((char) i);
 				}
 				log.debug(key.toString() + ": " + s + " (" + Integer.toHexString(i) + ")");
-				Poi13.put(key, s);
+				tree.put(new Bit(key, key.start()), s);
 			} else {
 				break;
 			}
@@ -185,13 +188,13 @@ public class Dictionary {
 		while (dict.length() > chSize) {
 			/** strLen */
 			int strLen; 
-			if (chSize < STR_LEN) {
+			if (chSize < this.strLen) {
 				strLen = dict.toInt(chSize, true);
 			} else {
-				strLen = dict.toInt(STR_LEN, true);
+				strLen = dict.toInt(this.strLen, true);
 			}
 			//log.trace(strLen);
-			dict.delete(STR_LEN);
+			dict.delete(this.strLen);
 			/** value */
 			StringBuffer value = new StringBuffer(strLen);
 			for (int i = 0; i < strLen; i++) {
@@ -201,61 +204,51 @@ public class Dictionary {
 			int i = keys.firstKey();
 			BitContainer key = keys.remove(i);
 			log.debug(key.toString() + ": \"" + value.toString() + "\"");
-			Poi13.put(key, value.toString());
+			tree.put(new Bit(key, key.start()), value.toString());
 		}
 	}
 
-	/** reads dictionary. */
-	public void read(PoiInputStream is) throws IOException {
-		/** 01 00 01 00 00 00 00 00 00 00 00 00 00 00 */
-		byte[] unknown1 = new byte[UNKNOWN1.length];
-		is.read(unknown1);
-		if (!Arrays.equals(unknown1, UNKNOWN1)) {
-			log.warn("unexpected unknown 1!");
-		}
+	/** id length in bits. */
+	public void setIdLen(int idLen) {
+		this.idLen = idLen;
+	}
 
-		/** size in bits of id */
-		idLen = is.readByte();
-
-		/** size in bytes of keys description */
-		headerLen = is.readInt2();
-		log.trace("header len: 0x" + Integer.toHexString(headerLen));
-
-		/** keys number */
-		keyNum = is.readInt2();
-		log.trace("keys number: " + keyNum / 2); // -1
-
+	/** keys header length in bytes. */
+	public byte[] setHeaderLen(int headerLen) {
 		/** keys description */
-		byte[] keysBuff = new byte[headerLen];
-		is.read(keysBuff);
+		keysBuff = new byte[headerLen];
+		return keysBuff;
+	}
 
-		/** 01 01 0a */
-		byte[] unknown2 = new byte[UNKNOWN2.length];
-		is.read(unknown2);
-		if (!Arrays.equals(unknown2, UNKNOWN2)) {
-			log.warn("unexpected unknown 2!");
-		}
+	/** keys number */
+	public void setKeyNum(int keyNum) {
+		this.keyNum = keyNum;
+	}
 
-		/** number of bits per char */
-		chSize = is.readByte();
-		log.trace("char size: " + chSize);
+	/** string size length in bits. */
+	public void setStrLen(int strLen) {
+		this.strLen = strLen;
+	}
 
-		/** id value of biggest single char */
-		ascii = is.readInt();
-		log.trace("ascii: 0x" + Integer.toHexString(ascii));
+	/** number of bits per char */
+	public void setChSize(int chSize) {
+		this.chSize = chSize;
+	}
 
-		/** */
-		byte[] unknown3 = new byte[UNKNOWN3];
-		is.read(unknown3);
-		log.debug("unknown: 0x" + Integer.toHexString(unknown3[0] & 0xFF) + " 0x" + Integer.toHexString(unknown3[1] & 0xFF) + " 0x" + Integer.toHexString(unknown3[2] & 0xFF) + " 0x" + Integer.toHexString(unknown3[3] & 0xFF));
+	/** id value of biggest single char */
+	public void setAscii(int ascii) {
+		this.ascii = ascii;
+	}
 
-		/** size in bytes of entries description */
-		dictLen = is.readInt();
-		log.trace("dict len: 0x" + Integer.toHexString(dictLen));
+	/** size in bytes of entries description */
+	public byte[] setDict(int dictLen) {
+		dictBuff = new byte[dictLen];
+		return dictBuff;
+	}
 
-		/** entries description */
-		byte[] dictBuff = new byte[dictLen];
-		is.read(dictBuff);
+	/** decode dictionary. */
+	public BinaryTree<String> getTree(BinaryTree<String> tree) {
+		this.tree = tree;
 
 		/** precede */
 		BitContainer bits = new BitContainer(keysBuff, true);
@@ -269,18 +262,18 @@ public class Dictionary {
 		 * 00       02       x8
 		 * 00000000 01000000 0001xxxx
 		 */
-		if (!UNKNOWN4.equalsIgnoreCase(dict.toString(UNKNOWN4.length()))) {
-			log.warn("unexpected unknown 4!");
+		if (!UNKNOWN5.equalsIgnoreCase(dict.toString(UNKNOWN5.length()))) {
+			log.warn("unexpected unknown 5!");
 		}
-		dict.delete(UNKNOWN4.length());
+		dict.delete(UNKNOWN5.length());
 
 		dict(keys, dict);
 
-		//BinaryTree<String> tree = Poi13.tree;
 		//Iterator<Bit> i = tree.keySet().iterator();
 		//while (i.hasNext()) {
 		//	Bit key = i.next();
 		//	log.debug(key.bits().toString() + " - \"" + tree.get(key) + "\"");
 		//}
+		return tree;
 	}
 }
