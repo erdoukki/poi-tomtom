@@ -63,7 +63,7 @@ public class PoiInputStream extends InputStream {
 				parents.remove(parent);
 			} else {
 				parents.remove(parent);
-//				log.error("Unread " + rest + " bytes from " + parent);
+				log.error("Unread " + rest + " bytes from " + parent);
 			}
 			if (parent instanceof PoiCommon) {
 				addChild(((PoiCommon)parent).getParent(), size);
@@ -230,7 +230,7 @@ public class PoiInputStream extends InputStream {
 				int size = catOffset - offset;
 				offset = catOffset;
 				stack.put((PoiContainer) category, size);
-				/**/System.out.println(size + " - " + category);
+				//log.debug(size + " - " + category);
 			}
 		} else {
 			for (Poi category: pois) {
