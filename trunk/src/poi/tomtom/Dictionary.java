@@ -184,7 +184,12 @@ public class Dictionary {
 	private void dict(SortedMap<Integer, BitContainer> keys, BitContainer dict) {
 		while (dict.length() > chSize) {
 			/** strLen */
-			int strLen = dict.toInt(chSize, true);
+			int strLen; 
+			if (chSize < STR_LEN) {
+				strLen = dict.toInt(chSize, true);
+			} else {
+				strLen = dict.toInt(STR_LEN, true);
+			}
 			//log.trace(strLen);
 			dict.delete(STR_LEN);
 			/** value */
@@ -195,7 +200,7 @@ public class Dictionary {
 			}
 			int i = keys.firstKey();
 			BitContainer key = keys.remove(i);
-			log.trace(key.toString() + ": \"" + value.toString() + "\"");
+			log.debug(key.toString() + ": \"" + value.toString() + "\"");
 			Poi13.put(key, value.toString());
 		}
 	}
@@ -271,10 +276,11 @@ public class Dictionary {
 
 		dict(keys, dict);
 
-		BinaryTree<String> tree = Poi13.tree;
-		Iterator<Bit> i = tree.keySet().iterator();
-		while (i.hasNext()) {
-			log.debug(i.next().bits().toString());
-		}
+		//BinaryTree<String> tree = Poi13.tree;
+		//Iterator<Bit> i = tree.keySet().iterator();
+		//while (i.hasNext()) {
+		//	Bit key = i.next();
+		//	log.debug(key.bits().toString() + " - \"" + tree.get(key) + "\"");
+		//}
 	}
 }
