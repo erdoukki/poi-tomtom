@@ -175,7 +175,7 @@ public class Dictionary {
 				if (i != 0) {
 					s = Character.toString((char) i);
 				}
-				log.debug(key.toString() + ": " + s + " (" + Integer.toHexString(i) + ")");
+				log.trace(key.toString() + ": " + s + " (" + Integer.toHexString(i) + ")");
 				tree.put(new Bit(key, key.start()), s);
 			} else {
 				break;
@@ -203,7 +203,7 @@ public class Dictionary {
 			}
 			int i = keys.firstKey();
 			BitContainer key = keys.remove(i);
-			log.debug(key.toString() + ": \"" + value.toString() + "\"");
+			log.trace(key.toString() + ": \"" + value.toString() + "\"");
 			tree.put(new Bit(key, key.start()), value.toString());
 		}
 	}
@@ -272,7 +272,7 @@ public class Dictionary {
 		//Iterator<Bit> i = tree.keySet().iterator();
 		//while (i.hasNext()) {
 		//	Bit key = i.next();
-		//	log.debug(key.bits().toString() + " - \"" + tree.get(key) + "\"");
+		//	log.trace(key.bits().toString() + " - \"" + tree.get(key) + "\"");
 		//}
 		return tree;
 	}
