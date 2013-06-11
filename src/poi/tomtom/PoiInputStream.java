@@ -214,7 +214,7 @@ public class PoiInputStream extends InputStream {
 	}
 
 	private Pois readCategory(byte type) throws IOException {
-		Pois pois = new Category(type, getParent());
+		Pois pois = new Categories(type, getParent());
 		int count = readPOIS();
 		for (int i = 0; i < count; i++) {
 			Category category = new Category(Category.TYPE_CATEGORY, pois);
