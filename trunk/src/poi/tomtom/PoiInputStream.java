@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StreamCorruptedException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Map;
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
 public class PoiInputStream extends InputStream {
+
+	protected static LogCategory log = LogCategory.getLogger(PoiInputStream.class);
 
 	public enum Mode {
 		OV2, DAT
@@ -138,7 +141,71 @@ public class PoiInputStream extends InputStream {
 		int count = readInt();
 		if (count == Dictionary.POIS) {
 			dict = new Dictionary();
-			dict.read(this);
+
+			/** 01 00 01 00 00 00 00 00 00 00 00 00 00 00 */
+			byte[] unknown1 = new byte[Dictionary.UNKNOWN1.length];
+			read(unknown1);
+			if (!Arrays.equals(unknown1, Dictionary.UNKNOWN1)) {
+				log.warn("unexpected unknown 1 - " + PoiCommon.hex(unknown1));
+			}
+
+			/** size in bits of id */
+			int idLen = readByte();
+			log.trace("id len: 0x" + Integer.toHexString(idLen));
+			dict.setIdLen(idLen);
+
+			/** size in bytes of keys description */
+			int headerLen = readInt2();
+			log.trace("header len: 0x" + Integer.toHexString(headerLen));
+			byte[] keysBuff = dict.setHeaderLen(headerLen);
+
+			/** keys number */
+			int keyNum = readInt2();
+			log.trace("keys number: " + keyNum / 2); // -1
+			dict.setKeyNum(keyNum);
+
+			/** keys description */
+			read(keysBuff);
+
+			/** 01 01 */
+			int unknown2 = readByte();
+			if (unknown2 != Dictionary.UNKNOWN2) {
+				log.warn("unexpected unknown 2 - 0x" + Integer.toHexString(unknown2));
+			}
+			int unknown3 = readByte();
+			if (unknown3 != Dictionary.UNKNOWN3) {
+				log.warn("unexpected unknown 3 - 0x" + Integer.toHexString(unknown3));
+			}
+
+			/** string size length in bits. */
+			int strLen = readByte();
+			log.trace("str length: " + strLen); // 10
+			dict.setStrLen(strLen);
+
+			/** number of bits per char */
+			int chSize = readByte();
+			log.trace("char size: " + chSize);
+			dict.setChSize(chSize);
+
+			/** id value of biggest single char */
+			int ascii = readInt();
+			log.trace("ascii: 0x" + Integer.toHexString(ascii));
+			dict.setAscii(ascii);
+
+			/** unknown */
+			int unknown4 = readInt();
+			log.debug("unknown: 0x" + Integer.toHexString(unknown4));
+
+			/** size in bytes of entries description */
+			int dictLen = readInt();
+			log.trace("dict len: 0x" + Integer.toHexString(dictLen));
+			byte[] dictBuff = dict.setDict(dictLen);
+
+			/** entries description */
+			read(dictBuff);
+
+			dict.getTree(Poi13.tree);
+
 			count = readInt();
 		} else {
 			Poi13.tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
