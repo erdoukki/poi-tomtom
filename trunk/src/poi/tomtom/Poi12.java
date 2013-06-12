@@ -174,4 +174,9 @@ and then, using b-tree table    : Description:"station" & Phone Number:"012"
 		}
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "Poi12 [S:" + size() + ", lon:" + nf(getLongitude()) + ", lat:" + nf(getLatitude()) + ", n:" + getName() + "]";
+	}
 }

@@ -136,4 +136,9 @@ get the modulus 3 : ((8281/40)/40) % 40 = 5 : E
 		}
 		return l;
 	}
+
+	@Override
+	public String toString() {
+		return "Poi10 [S:" + size() + ", lon:" + nf(getLongitude()) + ", lat:" + nf(getLatitude()) + ", n:" + getName() + "]";
+	}
 }
