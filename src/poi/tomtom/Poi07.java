@@ -58,6 +58,15 @@ public class Poi07 extends Poi04 {
 	 *
 	 * @return decoded description
 	 */
+	public void setName(String name) {
+		setName(name, CharMode.UTF16);
+	}
+
+	/**
+	 * Encodes POI description.
+	 *
+	 * @return decoded description
+	 */
 	public void setName(String name, CharMode charMode) {
 		this.name = encode(name, charMode);
 		super.setSize(this.name.length + HEADER);
