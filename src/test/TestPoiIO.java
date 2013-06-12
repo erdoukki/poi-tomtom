@@ -6,11 +6,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 
 import org.junit.Test;
 
-import poi.tomtom.Poi;
+import poi.tomtom.LogCategory;
 import poi.tomtom.Poi01;
 import poi.tomtom.Poi02;
 import poi.tomtom.Poi04;
@@ -22,12 +21,12 @@ import poi.tomtom.Poi09;
 import poi.tomtom.Poi10;
 import poi.tomtom.Poi12;
 import poi.tomtom.Poi13;
-import poi.tomtom.PoiCommon;
 import poi.tomtom.PoiInputStream;
-import poi.tomtom.PoiInputStream.Mode;
 import poi.tomtom.PoiOutputStream;
 
-public class TestPoi {
+public class TestPoiIO {
+
+	protected static LogCategory log = LogCategory.getLogger(TestPoiIO.class);
 
 	private static final int LON1 = 1234567;
 	private static final int LAT1 = 2345678;
@@ -55,10 +54,8 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi01 poi = null;
 		try {
-			while (is.available() > 0) {
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,7 +84,6 @@ public class TestPoi {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		/**/System.out.println(PoiCommon.hex(result));
 		assertArrayEquals(POI01, result);
 	}
 
@@ -97,10 +93,8 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi02 poi = null;
 		try {
-			while (is.available() > 0) {
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -136,11 +130,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi04 poi = null;
 		try {
-			while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -181,11 +174,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi05 poi = null;
 		try {
-			while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -228,11 +220,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi06 poi = null;
 		try {
-			while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -275,11 +266,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi07 poi = null;
 		try {
-			while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -322,11 +312,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi08 poi = null;
 		try {
-			while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -352,10 +341,6 @@ public class TestPoi {
 		poi.setSize(Poi08.SIZE);
 		poi.setLongitude(LON2);
 		poi.setLatitude(LAT2);
-		// s t a t i o n 
-		// 01010 01011 00100 01011 00111 01000 01001
-		// 0101001 01100100 0101100 11101000 0100100
-		// 29 64 2C E8 24
 		poi.setName(new byte[] {0x29, 0x64, 0x2C, (byte) 0xE8, 0x24});
 		try {
 			is.writePoi(parent);
@@ -373,11 +358,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi09 poi = null;
 		try {
-			//while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			//}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -420,11 +404,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi10 poi = null;
 		try {
-			//while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			//}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -467,11 +450,10 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi12 poi = null;
 		try {
-			//while (is.available() > 0) {
-				Poi01 parent = is.readPoi();
-				poi = is.readPoi();
-				System.out.println(poi);
-			//}
+			Poi01 parent = is.readPoi();
+			log.debug(parent);
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -514,10 +496,8 @@ public class TestPoi {
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi13 poi = null;
 		try {
-			//while (is.available() > 0) {
-				poi = is.readPoi();
-				System.out.println(poi);
-			//}
+			poi = is.readPoi();
+			log.info(poi);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -545,7 +525,7 @@ public class TestPoi {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		/**/System.out.println(PoiCommon.hex(result));
+		//System.out.println(PoiCommon.hex(result));
 		assertArrayEquals(POI13, result);
 	}
 }
