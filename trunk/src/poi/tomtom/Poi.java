@@ -14,6 +14,8 @@ There are 2 kinds of records :
  */
 public interface Poi {
 
+	public static final double LL = 100000.;
+
 //	public <P extends PoiContainer> P getParent();
 	public int size();
 	public int offset();
