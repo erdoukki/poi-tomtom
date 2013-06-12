@@ -136,4 +136,8 @@ The compressed method is the following :
 		return s.toString();
 	}
 
+	@Override
+	public String toString() {
+		return "Poi08 [S:" + size() + ", lon:" + nf(getLongitude()) + ", lat:" + nf(getLatitude()) + ", n:" + getName() + "]";
+	}
 }

@@ -268,4 +268,9 @@ and then                        : station
 		}
 		return result.toString();
 	}
+
+	@Override
+	public String toString() {
+		return "Poi09 [S:" + size() + ", lon:" + nf(getLongitude()) + ", lat:" + nf(getLatitude()) + ", n:" + getName() + "]";
+	}
 }
