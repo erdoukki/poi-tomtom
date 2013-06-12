@@ -12,7 +12,6 @@ public abstract class PoiCommon implements Poi {
 	private int size = 0;
 	private PoiContainer parent;
 
-	public static final double LL = 100000.;
 	private static final DecimalFormat nf;
 	static {
 		DecimalFormatSymbols ns = new DecimalFormatSymbols();
@@ -55,7 +54,7 @@ public abstract class PoiCommon implements Poi {
 	/**
 	 *  in bytes.
 	 */
-	protected void setSize(int size) {
+	public void setSize(int size) {
 		//System.out.println(getClass() + " size=" + this.size + " delta=" + (size - this.size));
 		if (parent != null) {
 			int delta = size - this.size;
