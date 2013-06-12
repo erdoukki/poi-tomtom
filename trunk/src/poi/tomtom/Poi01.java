@@ -30,7 +30,7 @@ public class Poi01 extends Pois implements AreaRecord {
 	private int longitude2;
 	private int latitude2;
 
-	protected Poi01(int type, PoiContainer parent) {
+	public Poi01(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 

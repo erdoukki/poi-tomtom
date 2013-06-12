@@ -28,7 +28,7 @@ public class Poi06 extends Poi04 {
 	/**
 	 * constructor.
 	 */
-	protected Poi06(int type, PoiContainer parent) {
+	public Poi06(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 
