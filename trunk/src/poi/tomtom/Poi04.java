@@ -62,6 +62,10 @@ The final value is obtain by this formula (considering X as the 3 bytes value) :
 		return latitude / LL - 80;
 	}
 
+	public void setLatitude(double latitude) {
+		this.latitude = (int)((latitude  + 80) * LL);
+	}
+
 /**
 <H3>Encodes longitude.</H3>
 Longitudes in POI Records are encoded on 3 bytes unsigned value (little indian) (in decimal degrees).
@@ -108,6 +112,10 @@ For example :
 			}
 		}
 		return l / LL;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = (int)(longitude * LL);
 	}
 
 	@Override
