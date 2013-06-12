@@ -94,7 +94,7 @@ Record 12 transposition numeric table.
 	/**
 	 * constructor.
 	 */
-	protected Poi12(int type, PoiContainer parent) {
+	public Poi12(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 

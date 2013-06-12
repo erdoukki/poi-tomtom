@@ -73,7 +73,7 @@ Record 10 transposition table.
 	/**
 	 * constructor.
 	 */
-	protected Poi10(int type, PoiContainer parent) {
+	public Poi10(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 
@@ -136,5 +136,4 @@ get the modulus 3 : ((8281/40)/40) % 40 = 5 : E
 		}
 		return l;
 	}
-
 }
