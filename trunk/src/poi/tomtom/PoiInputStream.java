@@ -258,7 +258,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size);
+		}
 		int longitude1 = readInt();
 		poi.setLon1(longitude1);
 		int latitude1 = readInt();
@@ -279,7 +281,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size);
+		}
 		int longitude = readInt();
 		poi.setLon(longitude);
 		int latitude = readInt();
@@ -297,7 +301,9 @@ public class PoiInputStream extends InputStream {
 		Poi04 poi = new Poi04(type, parent);
 		type = readByte();
 		poi.setSize(Poi04.SIZE);
-		((PoiCommon)parent).setSize(parent.size() - Poi04.SIZE);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - Poi04.SIZE);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -312,7 +318,9 @@ public class PoiInputStream extends InputStream {
 		Poi05 poi = new Poi05(type, parent);
 		type = readByte();
 		poi.setSize(Poi05.SIZE);
-		((PoiCommon)parent).setSize(parent.size() - Poi05.SIZE);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - Poi05.SIZE);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -329,7 +337,9 @@ public class PoiInputStream extends InputStream {
 		Poi06 poi = new Poi06(type, parent);
 		type = readByte();
 		poi.setSize(Poi06.SIZE);
-		((PoiCommon)parent).setSize(parent.size() - Poi06.SIZE);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - Poi06.SIZE);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -347,7 +357,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi07.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi07.HEADER);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -366,7 +378,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi08.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi08.HEADER);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -385,7 +399,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi09.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi09.HEADER);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -404,7 +420,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi10.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi10.HEADER);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -423,7 +441,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi12.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi12.HEADER);
+		}
 		int longitude = readInt3();
 		poi.setLon(longitude);
 		int latitude = readInt3();
@@ -442,7 +462,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size - Poi13.HEADER);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size - Poi13.HEADER);
+		}
 		int longitude = readInt();
 		poi.setLon(longitude);
 		int latitude = readInt();
@@ -468,7 +490,9 @@ public class PoiInputStream extends InputStream {
 		type = readByte();
 		int size = readInt();
 		poi.setSize(size);
-		((PoiCommon)parent).setSize(parent.size() - size);
+		if (parent != null) {
+			((PoiCommon)parent).setSize(parent.size() - size);
+		}
 		byte[] unknown1 = poi.getUnknown1();
 		read(unknown1);
 		//log.debug(hex(unknown1));
