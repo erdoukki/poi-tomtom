@@ -19,4 +19,5 @@ public interface Poi {
 //	public <P extends PoiContainer> P getParent();
 	public int size();
 	public int offset();
+	public int getType();
 }
