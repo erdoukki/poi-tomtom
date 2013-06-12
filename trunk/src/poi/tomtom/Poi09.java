@@ -251,7 +251,7 @@ and then                        : station
 	@Override
 	protected String decode(byte[] name) {
 		// return new Enc09.decode(description);
-		Bit bit = new Bit(new BitContainer(name, true), 0);
+		Bit bit = new Bit(new BitContainer(name.clone(), true), 0);
 		StringBuffer result = new StringBuffer();
 		try {
 			while (!bit.isLast()) {
