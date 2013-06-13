@@ -49,7 +49,7 @@
 <entry key="1010111011"              >,</entry>
 <entry key="1010111001"              >q</entry>
 <entry key="1010001100"              >x</entry>
-<entry key="0100011010"              >'</entry>
+<entry key="0100011010"              >'</entry> <!-- is is 0xed? -->
 <entry key="0100011001"              >O</entry>
 <entry key="0100010011"              >J</entry>
 <entry key="0100010010"              >&amp;</entry>
@@ -128,13 +128,13 @@
 <entry key="101011111100001011"      >&#x00FB;</entry>
 <entry key="000010110111010101010"   >&#x00B0;</entry>
 <entry key="1010111111000001011010"  >&#x00A0;</entry>
-<!-- 
- entry key="10101111110000100000000" >&#x00B7;</entry -->
+<entry key="10101111110000100000000" >&#x00B7;</entry>
 <entry key="10101111110000100000010" >&#x00A6;</entry>
 <!-- 
 <entry key="101011111100000101011000">&#x0085;</entry>
 <entry key="101011111100001000101001">&#x0096;</entry-->
 <entry key="101011111100001000110010">?</entry> <!--  -->
+<entry key="101011111100001000100011">&#x00FA;</entry> <!-- one more 0xfa -->
 <entry key="101011111100001000001000">?</entry> <!--  -->
 <entry key="011000011101110000"      >&#x00AE;</entry> <!--  -->
 
@@ -183,4 +183,5 @@
 <entry key="101011111100001000111011">&#x00F1;</entry>
 <entry key="101011111100001000111111">&#x00AF;</entry>
 -->
+
 </properties>
