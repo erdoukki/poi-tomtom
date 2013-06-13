@@ -211,22 +211,19 @@ public class BitContainer {
 	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		for (int i = start / 8; (i < buff.length) && (i < ((start + length + 7) >> 3)); i++) {
+		for (int i = start / 8; (i < buff.length) && (i < ((start + length + 7) / 8)); i++) {
 			String s = Integer.toBinaryString(buff[i] & 0xff);
-			if ((i == start / 8) && ((start % 8) != 0)) {
-				s = "00000000".substring(s.length()) + s;
-				s = s.substring((start) % 8);
-			} else if (i == ((start + length) >> 3)) {
-				s = "00000000".substring(s.length()) + s;
-				s = s.substring(0, ((start + length) % 8));
-			} else {
-				result.append("00000000".substring(s.length()));
-			}
+			s = "00000000".substring(s.length()) + s;
 			if (flip) {
 				for (int j = s.length() - 1; j >= 0; j --) {
 					result.append(s.charAt(j));
 				}
 			} else {
+				if ((i == start / 8) && ((start % 8) != 0)) {
+					s = s.substring((start) % 8);
+				} else if (i == ((start + length) / 8)) {
+					s = s.substring(0, ((start + length) % 8));
+				}
 				result.append(s);
 			}
 		}
