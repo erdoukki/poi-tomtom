@@ -59,12 +59,16 @@ public class BinaryTree<T> {
 			if (key.get()) {
 				if (node1 == null) {
 					node1 = new BinaryTree<T>(this);
+				} else if (node1.item != null) {
+					log.error("conflict when add " + item + ", existing " + node1.item);
 				}
 				key.inc();
 				node1.put(key, item);
 			} else {
 				if (node0 == null) {
 					node0 = new BinaryTree<T>(this);
+				} else if (node0.item != null) {
+					log.error("conflict when add " + item + ", existing " + node0.item);
 				}
 				key.inc();
 				node0.put(key, item);
