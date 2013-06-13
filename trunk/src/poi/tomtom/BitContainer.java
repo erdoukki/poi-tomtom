@@ -8,30 +8,28 @@ public class BitContainer {
 	private byte[] buff;
 	private int length;
 	private int start;
-
-	public BitContainer(byte[] buff) {
-		this(buff, false);
-	}
+	boolean flip;
 
 	public BitContainer(byte[] buff, boolean flip) {
-		this.buff = buff;
-		length = buff.length * 8;
-		start = 0;
-		if (flip) {
-			flipBytes(0);
-		}
+		this(buff, 0, buff.length * 8, flip);
 	}
 
 	BitContainer(byte[] buff, int start, int length) {
+		this(buff, start, length, false);
+	}
+
+	BitContainer(byte[] buff, int start, int length, boolean flip) {
 		this.buff = buff;
 		this.start = start;
 		this.length = length;
+		this.flip = flip;
 	}
 
-	public BitContainer(String s) {
+	BitContainer(String s) {
 		start = 0;
 		length = s.length();
-		buff = new byte[(length + 7) >> 3]; // /8
+		buff = new byte[(length + 7) / 8];
+		flip = false;
 		for (int i = 0; i < buff.length; i++) {
 			String t;
 			if (s.length() < 8) {
@@ -42,156 +40,6 @@ public class BitContainer {
 			}
 			buff[i] = (byte)Integer.parseInt(t, 2);
 		}
-	}
-
-	/**
-	 * Flip the bits.
-	 */
-	public void flip() {
-		BitContainer temp = new BitContainer(new byte[(length + 7) >> 3], 0, length); // /8
-		Bit b1 = new Bit(this, start);
-		Bit b2 = new Bit(temp, start + length - 1);
-		for (int k = 0; k < length; k++, b1.inc(), b2.dec()) {
-			b2.set(b1.get());
-		}
-		buff = temp.buff;
-	}
-
-	/**
-	 * Returns a new BitContainer composed of bits from this BitContainer from fromIndex(inclusive) to toIndex(exclusive).
-	 */
-	public BitContainer get(int fromIndex, int toIndex) {
-		int size = toIndex - fromIndex;
-		BitContainer temp = new BitContainer(new byte[(size + 7) >> 3], 0, size); // /8
-		Bit b1 = new Bit(this, start + fromIndex);
-		Bit b2 = new Bit(temp, 0);
-		for (int k = 0; k < size; k++, b1.inc(), b2.inc()) {
-			b2.set(b1.get());
-		}
-		return temp;
-	}
-
-	/**
-	 */
-	public void append(BitContainer b) {
-		BitContainer temp = null;
-		if (start + length + b.length > buff.length * 8) {
-			temp = new BitContainer(new byte[(length + b.length + 7) >> 3], 0, length + b.length); // /8
-			Bit b1 = new Bit(this, start);
-			Bit b2 = new Bit(temp, 0);
-			for (int k = 0; k < length; k++, b1.inc(), b2.inc()) {
-				b2.set(b1.get());
-			}
-			start = 0;
-		} else {
-			temp = this;
-		}
-		Bit b1 = new Bit(b, b.start);
-		Bit b2 = new Bit(temp, start + length);
-		for (int k = 0; k < b.length; k++, b1.inc(), b2.inc()) {
-			b2.set(b1.get());
-		}
-		length += b.length;
-		buff = temp.buff;
-	}
-
-	/**
-	 * Returns the index of the first bit that is set to false that occurs on or after the specified starting index.
-	 */
-	public int nextClearBit(int fromIndex) {
-		Bit b = new Bit(this, start + fromIndex);
-		for (int k = 0; k < length - fromIndex; k++, b.inc()) {
-			if (!b.get()) {
-				return k;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Returns the index of the first bit that is set to true that occurs on or after the specified starting index.
-	 */
-	public int nextSetBit(int fromIndex) {
-		Bit b = new Bit(this, start + fromIndex);
-		for (int k = 0; k < length - fromIndex; k++, b.inc()) {
-			if (b.get()) {
-				return k;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Returns the index of the last bit that is set to true that occurs on or after the specified starting index.
-	 */
-	public int lastSetBit(int fromIndex) {
-		Bit b = new Bit(this, start + length - 1);
-		int last = -1;
-		for (int k = 0; k < length - fromIndex; k++, b.dec()) {
-			if (b.get()) {
-				last = length - fromIndex - k - 1;
-				break;
-			}
-		}
-		return last;
-	}
-
-	/**
-	 * Flips the bits for the bytes.
-	 */
-	private byte[] flipBytes(int fromIndex) {
-		for (int i = fromIndex; i < buff.length; i++) {
-			byte b = 0;
-			byte mask = 1;
-			byte result;
-			for (int j = 0; j < 4; j++) {
-				result = (byte) (mask & buff[i]);
-				result <<= 7 - (j << 1); // *2
-				b |= result;
-				mask <<= 1;
-			}
-			int filter = 8;
-			for (int j = 0; j < 4; j++) {
-				result = (byte) (mask & buff[i]);
-				result >>= 1 + (j << 1); // *2
-				b |= (result & filter);
-				mask <<= 1;
-				filter >>= 1;
-			}
-			buff[i] = b;
-		}
-		return buff;
-	}
-
-	/**
-	 */
-	public void delete(int count) {
-		length -= count;
-		start += count;
-	}
-
-	/**
-	 * Masks a byte from this bit set.
-	 * 
-	 * @param index
-	 * @param mask
-	 * @param op
-	 */
-	void mask(int index, int mask, boolean op) {
-		if (op) {
-			buff[index] |= mask;
-		} else {
-			buff[index] &= ~mask;
-		}
-	}
-
-	/**
-	 * Returns a byte from this bit set.
-	 * 
-	 * @param index
-	 */
-	byte buff(int index) {
-		return buff[index];
 	}
 
 	/**
@@ -208,20 +56,153 @@ public class BitContainer {
 		return start;
 	}
 
+	public boolean isEmpty() {
+		return length() == 0;
+	}
+
+	// ------------------ container
+
 	/**
+	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
 	 */
-	public int toInt(int count, boolean flip) {
-		BitContainer i = get(0, count);
-		if (flip) {
-			i.flip();
+	public BitContainer get(int from, int size) {
+		return get(from, size, false);
+	}
+
+	/**
+	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
+	 */
+	public BitContainer get(int from, int size, boolean flip) {
+		if (size > length - start) {
+			throw new BitException("Size is more than lenght!");
 		}
-		return i.toInt();
+		BitContainer result = new BitContainer(buff, start + from, start + size, this.flip ^ flip);
+		return result;
+	}
+
+	/**
+	 * Append b to current.
+	 */
+	public void append(BitContainer b) {
+		if (start + length + b.length > buff.length * 8) {
+			/** new buffer */
+			byte[] result = new byte[((start % 8) + length + b.length + 7) / 8];
+			/** copy old to new (bytes) without unused */
+			for (int k = 0; k < ((length + 7) / 8); k++) {
+				result[k] = buff[k + (start / 8)];
+			}
+			start = start % 8;
+			buff = result;
+		}
+		//Bit b1 = new Bit(b, b.start);
+		//Bit b2 = new Bit(result, start + length);
+		for (int k = 0; k < b.length; k++, length++) {
+			set(length, get(k));
+		}
+	}
+
+	// ------------------ bit
+
+	/**
+	 * Does index bit is set
+	 */
+	boolean get(int index) {
+		int mask;
+		if (flip) {
+			mask = 1 << ((start + index) % 8);
+		} else {
+			mask = 128 >> ((start + index) % 8);
+		}
+		int i = (start + index) / 8;
+		return (mask & buff[i]) != 0;
+	}
+
+	/**
+	 * Set index bit with value.
+	 */
+	boolean set(int index, boolean value) {
+		int mask;
+		if (flip) {
+			mask = 1 << ((start + index) % 8);
+		} else {
+			mask = 128 >> ((start + index) % 8);
+		}
+		int i = (start + index) / 8;
+		boolean old = (mask & buff[i]) != 0;
+		mask(i, mask, value);
+		return old;
 	}
 
 	/**
 	 */
-	private int toInt() {
-		return Integer.parseInt(toString(), 2);
+	public void delete(int count) {
+		length -= count;
+		start += count;
+	}
+
+	/**
+	 * Returns the index of the first bit that is set to false that occurs on or after the specified starting index.
+	 */
+	public int nextClearBit(int fromIndex) {
+		for (int k = fromIndex; k < length; k++) {
+			if (!get(k)) {
+				return k - fromIndex;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Returns the index of the first bit that is set to true that occurs on or after the specified starting index.
+	 */
+	public int nextSetBit(int fromIndex) {
+		for (int k = fromIndex; k < length; k++) {
+			if (get(k)) {
+				return k - fromIndex;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Returns the index of the last bit that is set to true that occurs on or after the specified starting index.
+	 */
+	public int lastSetBit(int fromIndex) {
+		int last = -1;
+		for (int k = fromIndex; k < length; k++) {
+			if (get(k)) {
+				last = length - k - 1;
+				break;
+			}
+		}
+		return last;
+	}
+
+	// ------------------ byte
+
+	/**
+	 * Masks a byte from this bit set. If op true is plus; op false is minus. 
+	 * 
+	 * @param index
+	 * @param mask
+	 * @param op
+	 */
+	private void mask(int index, int mask, boolean op) {
+		if (op) {
+			buff[index] |= mask;
+		} else {
+			buff[index] &= ~mask;
+		}
+	}
+
+	// ------------------ common
+
+	/**
+	 * integer value of first count, may flip.
+	 */
+	public int toInt(int count, boolean flip) {
+		BitContainer i = get(0, count, flip);
+		return Integer.parseInt(i.toString(), 2);
 	}
 
 	/**
@@ -241,7 +222,13 @@ public class BitContainer {
 			} else {
 				result.append("00000000".substring(s.length()));
 			}
-			result.append(s);
+			if (flip) {
+				for (int j = s.length() - 1; j >= 0; j --) {
+					result.append(s.charAt(j));
+				}
+			} else {
+				result.append(s);
+			}
 		}
 		return result.toString();
 	}

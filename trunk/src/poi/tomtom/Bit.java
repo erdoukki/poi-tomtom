@@ -21,7 +21,7 @@ public class Bit {
 	}
 
 	public boolean isLast() {
-		return index > (bits.start() + bits.length() - 1);
+		return index > (bits.length() - 1);
 	}
 
 	void inc() {
@@ -33,16 +33,10 @@ public class Bit {
 	}
 
 	boolean get() {
-		int mask = 128 >> (index % 8);
-		int i = index >> 3;
-		return (mask & bits.buff(i)) != 0;
+		return bits.get(index);
 	}
 
-	void set(boolean value) {
-		int mask = 128 >> (index % 8);
-		int i = index >> 3;
-		//boolean old = mask & buff[i];
-		bits.mask(i, mask, value);
-		//return old;
+	boolean set(boolean value) {
+		return bits.set(index, value);
 	}
 }

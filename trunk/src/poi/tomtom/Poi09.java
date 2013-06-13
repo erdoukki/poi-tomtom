@@ -251,20 +251,22 @@ and then                        : station
 	@Override
 	protected String decode(byte[] name) {
 		// return new Enc09.decode(description);
-		Bit bit = new Bit(new BitContainer(name.clone(), true), 0);
+		BitContainer bits = new BitContainer(name.clone(), true);
 		StringBuffer result = new StringBuffer();
 		try {
-			while (!bit.isLast()) {
-				String value = tree.get(bit);
+			while (!bits.isEmpty()) {
+				BinaryTree<String> node = tree.find(bits);
+				String value = node.getItem();
 				if (value.length() == 0) {
 					// eos
 					return result.toString();
 				}
 				result.append(value);
+				bits.delete(node.getKey().length());
 			}
 		} catch (BitException e) {
 			int index = Integer.parseInt(e.getMessage());
-			throw new BitException("unknown (" + (result.length() + 1) + ") " + bit.bits().toString().substring(index));
+			throw new BitException("unknown (" + (result.length() + 1) + ") " + bits.toString().substring(index));
 		}
 		return result.toString();
 	}
