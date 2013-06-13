@@ -148,7 +148,7 @@ public class Dictionary {
 		bits.delete(len + 1 + idLen);
 		while ((bits.length() > 0) && (bits.nextSetBit(0) >= 0)) {
 			/** prepare new key - cuts the last set bit and follow */
-			key = key.get(0, key.lastSetBit(0));
+			key = new BitContainer(key.get(0, key.lastSetBit(0)).toString());
 			/** determine appendix - all bits to the first clear bit */
 			len = bits.nextClearBit(0) + 1;
 			BitContainer appendix = bits.get(0, len, true);
