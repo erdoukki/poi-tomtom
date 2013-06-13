@@ -139,7 +139,7 @@ public class BitContainer {
 	/**
 	 * Flips the bits for the bytes.
 	 */
-	public byte[] flipBytes(int fromIndex) {
+	private byte[] flipBytes(int fromIndex) {
 		for (int i = fromIndex; i < buff.length; i++) {
 			byte b = 0;
 			byte mask = 1;
@@ -220,7 +220,7 @@ public class BitContainer {
 
 	/**
 	 */
-	int toInt() {
+	private int toInt() {
 		return Integer.parseInt(toString(), 2);
 	}
 
@@ -229,22 +229,15 @@ public class BitContainer {
 	 */
 	@Override
 	public String toString() {
-		return toString(length);
-	}
-
-	/**
-	 * Returns a string representation of <b>count</b> bits of this bit set.
-	 */
-	public String toString(int count) {
 		StringBuffer result = new StringBuffer();
-		for (int i = start / 8; (i < buff.length) && (i < ((start + count + 7) >> 3)); i++) {
+		for (int i = start / 8; (i < buff.length) && (i < ((start + length + 7) >> 3)); i++) {
 			String s = Integer.toBinaryString(buff[i] & 0xff);
 			if ((i == start / 8) && ((start % 8) != 0)) {
 				s = "00000000".substring(s.length()) + s;
 				s = s.substring((start) % 8);
-			} else if (i == ((start + count) >> 3)) {
+			} else if (i == ((start + length) >> 3)) {
 				s = "00000000".substring(s.length()) + s;
-				s = s.substring(0, ((start + count) % 8));
+				s = s.substring(0, ((start + length) % 8));
 			} else {
 				result.append("00000000".substring(s.length()));
 			}
