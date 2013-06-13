@@ -215,6 +215,11 @@ public class BitContainer {
 			String s = Integer.toBinaryString(buff[i] & 0xff);
 			s = "00000000".substring(s.length()) + s;
 			if (flip) {
+				if ((i == start / 8) && ((start % 8) != 0)) {
+					s = s.substring(8 - (start) % 8);
+				} else if (i == ((start + length) / 8)) {
+					s = s.substring(8 - ((start + length) % 8));
+				}
 				for (int j = s.length() - 1; j >= 0; j --) {
 					result.append(s.charAt(j));
 				}
