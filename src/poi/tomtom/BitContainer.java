@@ -76,7 +76,7 @@ public class BitContainer {
 		if (size > length - start) {
 			throw new BitException("Size is more than lenght!");
 		}
-		BitContainer result = new BitContainer(buff, start + from, start + size, this.flip ^ flip);
+		BitContainer result = new BitContainer(buff, start + from, size, this.flip ^ flip);
 		return result;
 	}
 
