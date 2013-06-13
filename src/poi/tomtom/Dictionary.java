@@ -151,9 +151,8 @@ public class Dictionary {
 			key = key.get(0, key.lastSetBit(0));
 			/** determine appendix - all bits to the first clear bit */
 			len = bits.nextClearBit(0) + 1;
-			BitContainer appendix = bits.get(0, len);
+			BitContainer appendix = bits.get(0, len, true);
 			bits.delete(len);
-			appendix.flip();
 			/** appends it */
 			key.append(appendix);
 			/** the id */
@@ -176,7 +175,7 @@ public class Dictionary {
 					s = Character.toString((char) i);
 				}
 				log.trace(key.toString() + ": " + s + " (" + Integer.toHexString(i) + ")");
-				tree.put(new Bit(key, key.start()), s);
+				tree.put(key, s);
 			} else {
 				break;
 			}
@@ -204,7 +203,7 @@ public class Dictionary {
 			int i = keys.firstKey();
 			BitContainer key = keys.remove(i);
 			log.trace(key.toString() + ": \"" + value.toString() + "\"");
-			tree.put(new Bit(key, key.start()), value.toString());
+			tree.put(key, value.toString());
 		}
 	}
 

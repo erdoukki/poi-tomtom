@@ -17,6 +17,7 @@ public class BinaryTree<T> {
 	private static LogCategory log = LogCategory.getLogger(BinaryTree.class);
 
 	private T item = null;
+	private BitContainer key = null;
 	private BinaryTree<T> node0;
 	private BinaryTree<T> node1;
 	private final BinaryTree<T> root;
@@ -42,7 +43,7 @@ public class BinaryTree<T> {
 				String key = (String) code.getKey();
 				@SuppressWarnings("unchecked")
 				T value = (T) code.getValue();
-				put(new Bit(new BitContainer(key), 0), value);
+				put(new BitContainer(key), value);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -51,9 +52,22 @@ public class BinaryTree<T> {
 		}
 	}
 
-	public void put(Bit key, T item) {
+	public T getItem() {
+		return item;
+	}
+
+	public BitContainer getKey() {
+		return key;
+	}
+
+	public void put(BitContainer key, T item) {
+		put(new Bit(key, 0), item);
+	}
+
+	private void put(Bit key, T item) {
 		if (key.isLast()) {
 			this.item = item;
+			this.key = key.bits();
 			log.trace(key().bits().toString());
 		} else {
 			if (key.get()) {
@@ -76,21 +90,29 @@ public class BinaryTree<T> {
 		}
 	}
 
+	public BinaryTree<T> find(BitContainer key) {
+		return find(new Bit(key, 0));
+	}
+
 	public T get(Bit key) {
+		return find(key).item;
+	}
+
+	public BinaryTree<T> find(Bit key) {
 		if (key.isLast()) {
 			log.trace(key().bits().toString());
-			return item;
+			return this;
 		}
 		if (key.get()) {
 			if (node1 == null) {
 				if (null == item) {
 					throw new BitException(Integer.toString(key.index()));
 				}
-				return item;
+				return this;
 			}
 			key.inc();
 			try {
-				return node1.get(key);
+				return node1.find(key);
 			} catch (BitException e) {
 				int index = Integer.parseInt(e.getMessage());
 				throw new BitException(Integer.toString(index - 1));
@@ -100,11 +122,11 @@ public class BinaryTree<T> {
 				if (null == item) {
 					throw new BitException(Integer.toString(key.index()));
 				}
-				return item;
+				return this;
 			}
 			key.inc();
 			try {
-				return node0.get(key);
+				return node0.find(key);
 			} catch (BitException e) {
 				int index = Integer.parseInt(e.getMessage());
 				throw new BitException(Integer.toString(index - 1));
