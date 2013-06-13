@@ -97,7 +97,7 @@ public class BitContainer {
 		//Bit b1 = new Bit(b, b.start);
 		//Bit b2 = new Bit(result, start + length);
 		for (int k = 0; k < b.length; k++, length++) {
-			set(length, get(k));
+			set(length, b.get(k));
 		}
 	}
 
