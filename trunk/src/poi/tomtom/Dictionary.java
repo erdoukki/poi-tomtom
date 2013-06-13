@@ -262,7 +262,7 @@ public class Dictionary {
 		 * 00       02       x8
 		 * 00000000 01000000 0001xxxx
 		 */
-		if (!UNKNOWN5.equalsIgnoreCase(dict.toString(UNKNOWN5.length()))) {
+		if (!UNKNOWN5.equalsIgnoreCase(dict.get(0, UNKNOWN5.length()).toString())) {
 			log.warn("unexpected unknown 5!");
 		}
 		dict.delete(UNKNOWN5.length());
