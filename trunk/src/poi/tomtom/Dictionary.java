@@ -142,7 +142,7 @@ public class Dictionary {
 	private SortedMap<Integer, BitContainer> readKeys(BitContainer bits) {
 		TreeMap<Integer, BitContainer> keys = new TreeMap<Integer, BitContainer>();
 		int len = bits.nextClearBit(0);
-		BitContainer key = bits.get(0, len);
+		BitContainer key = new BitContainer(bits.get(0, len).toString());
 		//log.debug("eos: " + key.toString());
 		keys.put(0, key);
 		bits.delete(len + 1 + idLen);
