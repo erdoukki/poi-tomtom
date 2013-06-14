@@ -168,9 +168,9 @@ public class BitContainer {
 	 */
 	public int lastSetBit(int fromIndex) {
 		int last = -1;
-		for (int k = fromIndex; k < length; k++) {
+		for (int k = length - 1; k >= fromIndex; k--) {
 			if (get(k)) {
-				last = length - k - 1;
+				last = k - fromIndex;
 				break;
 			}
 		}
