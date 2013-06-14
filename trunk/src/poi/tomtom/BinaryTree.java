@@ -57,6 +57,9 @@ public class BinaryTree<T> {
 	}
 
 	public BitContainer getKey() {
+		if (key == null) {
+			return key();
+		}
 		return key;
 	}
 
@@ -68,7 +71,7 @@ public class BinaryTree<T> {
 		if (key.isLast()) {
 			this.item = item;
 			this.key = key.bits();
-			log.trace(key().bits().toString());
+			log.trace(getKey().toString());
 		} else {
 			if (key.get()) {
 				if (node1 == null) {
@@ -100,7 +103,7 @@ public class BinaryTree<T> {
 
 	public BinaryTree<T> find(Bit key) {
 		if (key.isLast()) {
-			log.trace(key().bits().toString());
+			log.trace(getKey().toString());
 			return this;
 		}
 		if (key.get()) {
@@ -134,19 +137,19 @@ public class BinaryTree<T> {
 		}
 	}
 
-	private Bit key() {
+	private BitContainer key() {
 		if (root != null) {
 			if (root.node0 == this) {
-				Bit key = root.key();
-				key.bits().append(new BitContainer(new byte[] {0}, 0, 1)); // + "0";
+				BitContainer key = root.key();
+				key.append(new BitContainer(new byte[] {0}, 0, 1)); // + "0";
 				return key;
 			} else {
-				Bit key = root.key();
-				key.bits().append(new BitContainer(new byte[] {1}, 7, 1)); // + "1";
+				BitContainer key = root.key();
+				key.append(new BitContainer(new byte[] {1}, 7, 1)); // + "1";
 				return key;
 			}
 		}
-		return new Bit(new BitContainer(new byte[0], 0, 0),0);
+		return new BitContainer(new byte[0], 0, 0);
 	}
 
 	private BinaryTree<T> prev() {
@@ -189,11 +192,11 @@ public class BinaryTree<T> {
 		}
 	}
 
-	public Set<Bit> keySet() {
-		return new Set<Bit>() {
+	public Set<BitContainer> keySet() {
+		return new Set<BitContainer>() {
 
 			@Override
-			public boolean add(Bit arg0) {throw new RuntimeException("unimplemented");}
+			public boolean add(BitContainer arg0) {throw new RuntimeException("unimplemented");}
 
 			@Override
 			public boolean addAll(Collection arg0) {throw new RuntimeException("unimplemented");}
@@ -211,8 +214,8 @@ public class BinaryTree<T> {
 			public boolean isEmpty() {throw new RuntimeException("unimplemented");}
 
 			@Override
-			public Iterator<Bit> iterator() {
-				return new Iterator<Bit>() {
+			public Iterator<BitContainer> iterator() {
+				return new Iterator<BitContainer>() {
 					private BinaryTree<T> current = prev();
 
 					@Override
@@ -221,9 +224,9 @@ public class BinaryTree<T> {
 					}
 
 					@Override
-					public Bit next() {
+					public BitContainer next() {
 						current = current.next();
-						return current.key();
+						return current.getKey();
 					}
 
 					@Override
