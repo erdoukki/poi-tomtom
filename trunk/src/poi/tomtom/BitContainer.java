@@ -26,10 +26,6 @@ public class BitContainer {
 	}
 
 	BitContainer(String s) {
-		this(s, false);
-	}
-
-	public BitContainer(String s, boolean flip) {
 		start = 0;
 		length = s.length();
 		buff = new byte[(length + 7) / 8];
@@ -43,7 +39,8 @@ public class BitContainer {
 			}
 			buff[i] = (byte)Integer.parseInt(t, 2);
 		}
-		this.flip = flip;
+		/** flip string, but not bytes */
+		this.flip = false;
 	}
 
 	/**
@@ -85,6 +82,22 @@ public class BitContainer {
 		for (int k = 0; k < b.length; k++, length++) {
 			set(length, b.get(k));
 		}
+	}
+
+	/**
+	 * Returns flip copy of BitContainer with given <b>size</b>.
+	 */
+	public BitContainer flip(int size) {
+		if (size > length - start) {
+			throw new BitException("Size is more than lenght!");
+		}
+		String s = toString(size);
+		StringBuffer b = new StringBuffer();
+		for (int i = s.length() - 1; i >=0; i--) {
+			b.append(s.charAt(i));
+		}
+		BitContainer result = new BitContainer(b.toString());
+		return result;
 	}
 
 	// ------------------ bit
@@ -191,30 +204,27 @@ public class BitContainer {
 	}
 
 	/**
-	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
-	 */
-	public String toString(int size) {
-		if (size > length - start) {
-			throw new BitException("Size is more than lenght!");
-		}
-		BitContainer result = new BitContainer(buff, start, size, flip);
-		return result.toString();
-	}
-
-	/**
 	 * Returns a string representation of this bit set.
 	 */
 	@Override
 	public String toString() {
+		return toString(length);
+	}
+
+	/**
+	 * Returns a string representation of part of this bit set.
+	 */
+	public String toString(int size) {
 		StringBuffer result = new StringBuffer();
-		for (int i = start / 8; (i < buff.length) && (i < ((start + length + 7) / 8)); i++) {
+		for (int i = start / 8; (i < buff.length) && (i < ((start + size + 7) / 8)); i++) {
 			String s = Integer.toBinaryString(buff[i] & 0xff);
 			s = "00000000".substring(s.length()) + s;
 			if (flip) {
+				if (i == ((start + size) / 8)) {
+					s = s.substring(8 - ((start + size) % 8));
+				}
 				if ((i == start / 8) && ((start % 8) != 0)) {
-					s = s.substring(0, 8 - (start) % 8);
-				} else if (i == ((start + length) / 8)) {
-					s = s.substring(8 - ((start + length) % 8));
+					s = s.substring(0, s.length() - (start) % 8);
 				}
 				for (int j = s.length() - 1; j >= 0; j --) {
 					result.append(s.charAt(j));
@@ -222,8 +232,8 @@ public class BitContainer {
 			} else {
 				if ((i == start / 8) && ((start % 8) != 0)) {
 					s = s.substring((start) % 8);
-				} else if (i == ((start + length) / 8)) {
-					s = s.substring(0, ((start + length) % 8));
+				} else if (i == ((start + size) / 8)) {
+					s = s.substring(0, ((start + size) % 8));
 				}
 				result.append(s);
 			}
