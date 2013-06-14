@@ -70,17 +70,10 @@ public class BitContainer {
 	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
 	 */
 	public BitContainer get(int from, int size) {
-		return get(from, size, false);
-	}
-
-	/**
-	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
-	 */
-	public BitContainer get(int from, int size, boolean flip) {
 		if (size > length - start) {
 			throw new BitException("Size is more than lenght!");
 		}
-		BitContainer result = new BitContainer(buff, start + from, size, this.flip ^ flip);
+		BitContainer result = new BitContainer(buff, start + from, size, flip);
 		return result;
 	}
 
