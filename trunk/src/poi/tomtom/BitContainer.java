@@ -67,17 +67,6 @@ public class BitContainer {
 	// ------------------ container
 
 	/**
-	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
-	 */
-	public BitContainer get(int from, int size) {
-		if (size > length - start) {
-			throw new BitException("Size is more than lenght!");
-		}
-		BitContainer result = new BitContainer(buff, start + from, size, flip);
-		return result;
-	}
-
-	/**
 	 * Append b to current.
 	 */
 	public void append(BitContainer b) {
@@ -199,6 +188,17 @@ public class BitContainer {
 	 */
 	public int toInt() {
 		return Integer.parseInt(toString(), 2);
+	}
+
+	/**
+	 * Returns a copy of BitContainer starts <b>from</b> bits with given <b>size</b>.
+	 */
+	public String toString(int size) {
+		if (size > length - start) {
+			throw new BitException("Size is more than lenght!");
+		}
+		BitContainer result = new BitContainer(buff, start, size, flip);
+		return result.toString();
 	}
 
 	/**
