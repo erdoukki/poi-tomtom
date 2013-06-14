@@ -151,12 +151,12 @@ public class Dictionary {
 			key = new BitContainer(key.toString(key.lastSetBit(0)));
 			/** determine appendix - all bits to the first clear bit */
 			len = bits.nextClearBit(0) + 1;
-			BitContainer appendix = new BitContainer(bits.toString(len), true);
+			BitContainer appendix = bits.flip(len);
 			bits.delete(len);
 			/** appends it */
 			key.append(appendix);
 			/** the id */
-			int id = new BitContainer(bits.toString(idLen), true).toInt();
+			int id = bits.flip(idLen).toInt();
 			bits.delete(idLen);
 			log.trace(id + ": " + key.toString());
 			keys.put(id, key);
@@ -188,16 +188,16 @@ public class Dictionary {
 			/** strLen */
 			int strLen; 
 			if (chSize < this.strLen) {
-				strLen = new BitContainer(dict.toString(chSize), true).toInt();
+				strLen = dict.flip(chSize).toInt();
 			} else {
-				strLen = new BitContainer(dict.toString(chSize), true).toInt();
+				strLen = dict.flip(chSize).toInt();
 			}
 			//log.trace(strLen);
 			dict.delete(this.strLen);
 			/** value */
 			StringBuffer value = new StringBuffer(strLen);
 			for (int i = 0; i < strLen; i++) {
-				value.append((char) new BitContainer(dict.toString(chSize), true).toInt());
+				value.append((char) dict.flip(chSize).toInt());
 				dict.delete(chSize);
 			}
 			int i = keys.firstKey();
