@@ -88,7 +88,7 @@ public class BitContainer {
 	 * Returns flip copy of BitContainer with given <b>size</b>.
 	 */
 	public BitContainer flip(int size) {
-		if (size > length - start) {
+		if (size > length) {
 			throw new BitException("Size is more than lenght!");
 		}
 		String s = toString(size);
