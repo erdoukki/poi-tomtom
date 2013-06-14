@@ -97,11 +97,7 @@ public class BinaryTree<T> {
 		return find(new Bit(key, 0));
 	}
 
-	public T get(Bit key) {
-		return find(key).item;
-	}
-
-	public BinaryTree<T> find(Bit key) {
+	private BinaryTree<T> find(Bit key) {
 		if (key.isLast()) {
 			log.trace(getKey().toString());
 			return this;
