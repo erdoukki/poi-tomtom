@@ -142,21 +142,21 @@ public class Dictionary {
 	private SortedMap<Integer, BitContainer> readKeys(BitContainer bits) {
 		TreeMap<Integer, BitContainer> keys = new TreeMap<Integer, BitContainer>();
 		int len = bits.nextClearBit(0);
-		BitContainer key = new BitContainer(bits.get(0, len).toString());
+		BitContainer key = new BitContainer(bits.toString(len));
 		//log.debug("eos: " + key.toString());
 		keys.put(0, key);
 		bits.delete(len + 1 + idLen);
 		while ((bits.length() > 0) && (bits.nextSetBit(0) >= 0)) {
 			/** prepare new key - cuts the last set bit and follow */
-			key = new BitContainer(key.get(0, key.lastSetBit(0)).toString());
+			key = new BitContainer(key.toString(key.lastSetBit(0)));
 			/** determine appendix - all bits to the first clear bit */
 			len = bits.nextClearBit(0) + 1;
-			BitContainer appendix = new BitContainer(bits.get(0, len).toString(), true);
+			BitContainer appendix = new BitContainer(bits.toString(len), true);
 			bits.delete(len);
 			/** appends it */
 			key.append(appendix);
 			/** the id */
-			int id = new BitContainer(bits.get(0, idLen).toString(), true).toInt();
+			int id = new BitContainer(bits.toString(idLen), true).toInt();
 			bits.delete(idLen);
 			log.trace(id + ": " + key.toString());
 			keys.put(id, key);
@@ -188,16 +188,16 @@ public class Dictionary {
 			/** strLen */
 			int strLen; 
 			if (chSize < this.strLen) {
-				strLen = new BitContainer(dict.get(0, chSize).toString(), true).toInt();
+				strLen = new BitContainer(dict.toString(chSize), true).toInt();
 			} else {
-				strLen = new BitContainer(dict.get(0, chSize).toString(), true).toInt();
+				strLen = new BitContainer(dict.toString(chSize), true).toInt();
 			}
 			//log.trace(strLen);
 			dict.delete(this.strLen);
 			/** value */
 			StringBuffer value = new StringBuffer(strLen);
 			for (int i = 0; i < strLen; i++) {
-				value.append((char) new BitContainer(dict.get(0, chSize).toString(), true).toInt());
+				value.append((char) new BitContainer(dict.toString(chSize), true).toInt());
 				dict.delete(chSize);
 			}
 			int i = keys.firstKey();
@@ -261,7 +261,7 @@ public class Dictionary {
 		 * 00       02       x8
 		 * 00000000 01000000 0001xxxx
 		 */
-		if (!UNKNOWN5.equalsIgnoreCase(dict.get(0, UNKNOWN5.length()).toString())) {
+		if (!UNKNOWN5.equalsIgnoreCase(dict.toString(UNKNOWN5.length()))) {
 			log.warn("unexpected unknown 5!");
 		}
 		dict.delete(UNKNOWN5.length());
