@@ -26,10 +26,13 @@ public class BitContainer {
 	}
 
 	BitContainer(String s) {
+		this(s, false);
+	}
+
+	public BitContainer(String s, boolean flip) {
 		start = 0;
 		length = s.length();
 		buff = new byte[(length + 7) / 8];
-		flip = false;
 		for (int i = 0; i < buff.length; i++) {
 			String t;
 			if (s.length() < 8) {
@@ -40,6 +43,7 @@ public class BitContainer {
 			}
 			buff[i] = (byte)Integer.parseInt(t, 2);
 		}
+		this.flip = flip;
 	}
 
 	/**
@@ -200,9 +204,8 @@ public class BitContainer {
 	/**
 	 * integer value of first count, may flip.
 	 */
-	public int toInt(int count, boolean flip) {
-		BitContainer i = get(0, count, flip);
-		return Integer.parseInt(i.toString(), 2);
+	public int toInt() {
+		return Integer.parseInt(toString(), 2);
 	}
 
 	/**
@@ -216,7 +219,7 @@ public class BitContainer {
 			s = "00000000".substring(s.length()) + s;
 			if (flip) {
 				if ((i == start / 8) && ((start % 8) != 0)) {
-					s = s.substring(8 - (start) % 8);
+					s = s.substring(0, 8 - (start) % 8);
 				} else if (i == ((start + length) / 8)) {
 					s = s.substring(8 - ((start + length) % 8));
 				}
