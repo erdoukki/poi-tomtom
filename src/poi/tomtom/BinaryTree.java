@@ -36,6 +36,7 @@ public class BinaryTree<T> {
 	}
 
 	public void loadFromXml(String fileName) {
+		clean();
 		Properties codes = new Properties();
 		try {
 			codes.loadFromXML(new FileInputStream(fileName));
@@ -50,6 +51,14 @@ public class BinaryTree<T> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void clean() {
+		item = null;
+		key = null;
+		node0 = null;
+		node1 = null;
+		//root = null;
 	}
 
 	public T getItem() {
