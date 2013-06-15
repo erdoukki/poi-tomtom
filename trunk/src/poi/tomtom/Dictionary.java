@@ -186,17 +186,17 @@ public class Dictionary {
 	private void dict(SortedMap<Integer, BitContainer> keys, BitContainer dict) {
 		while (dict.length() > chSize) {
 			/** strLen */
-			int strLen; 
-			if (chSize < this.strLen) {
-				strLen = dict.flip(chSize).toInt();
+			int str; 
+			if (chSize < strLen) {
+				str = dict.flip(chSize).toInt();
 			} else {
-				strLen = dict.flip(chSize).toInt();
+				str = dict.flip(strLen).toInt();
 			}
 			//log.trace(strLen);
-			dict.delete(this.strLen);
+			dict.delete(strLen);
 			/** value */
-			StringBuffer value = new StringBuffer(strLen);
-			for (int i = 0; i < strLen; i++) {
+			StringBuffer value = new StringBuffer(str);
+			for (int i = 0; i < str; i++) {
 				value.append((char) dict.flip(chSize).toInt());
 				dict.delete(chSize);
 			}
