@@ -248,6 +248,7 @@ public class Dictionary {
 	/** decode dictionary. */
 	public BinaryTree<String> getTree(BinaryTree<String> tree) {
 		this.tree = tree;
+		tree.clean();
 
 		/** precede */
 		BitContainer bits = new BitContainer(keysBuff, true);
