@@ -80,7 +80,7 @@ public class BinaryTree<T> {
 		if (key.isLast()) {
 			this.item = item;
 			this.key = key.bits();
-			log.trace(getKey().toString());
+			//log.trace(getKey().toString());
 		} else {
 			if (key.get()) {
 				if (node1 == null) {
@@ -108,7 +108,7 @@ public class BinaryTree<T> {
 
 	private BinaryTree<T> find(Bit key) {
 		if (key.isLast()) {
-			log.trace(getKey().toString());
+			//log.trace(getKey().toString());
 			return this;
 		}
 		if (key.get()) {
@@ -160,6 +160,8 @@ public class BinaryTree<T> {
 	private BinaryTree<T> prev() {
 		if (null != node0) {
 			return node0.prev();
+		} else if (null != node1) {
+			return node1.prev();
 		} else {
 			return this;
 		}
