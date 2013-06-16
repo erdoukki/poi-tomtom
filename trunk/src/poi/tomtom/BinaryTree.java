@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -259,5 +260,32 @@ public class BinaryTree<T> {
 			@Override
 			public Object[] toArray(Object[] arg0) {throw new RuntimeException("unimplemented");}
 		};
+	}
+
+	public Set<String> unknownKeys() {
+		Set<String> unknownKeys = new HashSet<String>();
+		for (BitContainer key: keySet()) {
+			BinaryTree<T> node = find(key);
+			BinaryTree<T> root = node.root;
+			while (root != null) {
+				if (root.node0 == null || root.node1 == null) {
+					if (root.node0 == null) {
+						if (!unknownKeys.contains(root.getKey() + "0")) {
+							unknownKeys.add(root.getKey() + "0");
+							//log.trace(root.getKey() + "0");
+						}
+					} 
+					if (root.node1 == null) {
+						if (!unknownKeys.contains(root.getKey() + "1")) {
+							unknownKeys.add(root.getKey() + "1");
+							//log.trace(root.getKey() + "1");
+						}
+					}
+				}
+				root = root.root;
+			}
+			//log.trace(node.getKey() + " \"" + node.getItem() + "\"");
+		}
+		return unknownKeys;
 	}
 }

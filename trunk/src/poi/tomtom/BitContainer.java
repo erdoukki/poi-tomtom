@@ -44,6 +44,13 @@ public class BitContainer {
 	}
 
 	/**
+	 * Returns the buff.
+	 */
+	public byte[] buff() {
+		return buff;
+	}
+
+	/**
 	 * Returns the length of this bit set.
 	 */
 	public int length() {
