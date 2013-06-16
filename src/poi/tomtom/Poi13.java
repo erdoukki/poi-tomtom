@@ -1,6 +1,9 @@
 package poi.tomtom;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
 <h3>Record 13.</h3>
@@ -191,6 +194,9 @@ and then                        : station
 			while (!bits.isEmpty()) {
 				BinaryTree<String> node = tree.find(bits);
 				String value = node.getItem();
+				if (value == null) {
+					//log.error("npe!");
+				}
 				if (value.length() == 0) {
 					/** eos */
 					return result.toString();
@@ -200,9 +206,54 @@ and then                        : station
 			}
 		} catch (BitException e) {
 			int index = Integer.parseInt(e.getMessage());
-			throw new BitException("unknown (" + (result.length() + 1) + ") " + bits.toString().substring(index));
+			throw new BitException(catchBits(result.toString(), bits.toString().substring(index).toString()));
 		}
 		return result.toString();
+	}
+
+	private String catchBits(String result, String bits) {
+		Set<String> unknownKeys = tree.unknownKeys();
+		String found = "";
+		for (String key: unknownKeys) {
+			/** looking for longest key that fit */
+			if (bits.startsWith(key)) {
+				found = key;
+				break;
+			}
+		}
+		if (found.isEmpty()) {
+			return result + " - unknown (" + (result.length() + 1) + ") " + bits;
+		}
+		List<String> suggestions = new ArrayList<String>();
+		while (found.length() < 25) {
+			try {
+				if (bits.length() < found.length()) break;
+				String str = bits.substring(found.length());
+				StringBuffer flip = new StringBuffer();
+				for (int i = 0; i < ((str.length() + 7) / 8); i++) {
+					for (int j = 7; j >= 0; j--) {
+						if (i * 8 + j < str.length()) {
+							flip.append(str.charAt(i * 8 + j));
+						} else {
+							flip.append("0");
+						}
+					}
+				}
+				BitContainer rest = new BitContainer(flip.toString());
+				suggestions.add("key " + found + " : " + result + "?" + decode(rest.buff()));
+			} catch (Exception e) {
+				/** do nothing */
+			}
+			if (bits.length() <= found.length()) break;
+			found += bits.substring(found.length(), found.length() + 1);
+		}
+		if (!suggestions.isEmpty()) {
+			String str = "";
+			for (String suggestion: suggestions)
+				str += "\n" + suggestion;
+			return str;
+		}
+		return result + " - unknown (" + (result.length() + 1) + ") " + bits;
 	}
 
 	static void putAll() {
