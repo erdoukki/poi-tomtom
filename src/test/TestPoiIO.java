@@ -387,7 +387,7 @@ public class TestPoiIO {
 		poi.setSize(Poi09.SIZE);
 		poi.setLongitude(LON2);
 		poi.setLatitude(LAT2);
-		poi.setName(new byte[] {0x68, 0x78, 0x3c, (byte) 0xb2, 0x01});
+		poi.setName(NAME);
 		try {
 			is.writePoi(parent);
 			is.writePoi(poi);

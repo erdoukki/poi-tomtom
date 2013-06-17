@@ -319,6 +319,36 @@ and then                        : station
 		return result + " - unknown (" + (result.length() + 1) + ") " + bits;
 	}
 
+	/** Encode plain text to byte array */
+	@Override
+	byte[] encode(String description, CharMode mode) {
+		BitContainer result = new BitContainer(new byte[0], true);
+		int i = 0;
+		while (i < description.length()) {
+			BinaryTree<String> found = null; 
+			for (BitContainer key: tree.keySet()) {
+				BinaryTree<String> node = tree.find(key);
+				if (description.substring(i).startsWith(node.getItem())) {
+					if ((found == null) || (node.getItem().length() > found.getItem().length())) {
+						/** next longest node fron the tree*/
+						found = node;
+					}
+				}
+			}
+			result.append(found.getKey());
+			i += found.getItem().length();
+		}
+		/** eol */
+		for (BitContainer key: tree.keySet()) {
+			BinaryTree<String> node = tree.find(key);
+			if (node.getItem().isEmpty()) {
+				result.append(node.getKey());
+				break;
+			}
+		}
+		return result.buff();
+	}
+
 	@Override
 	public String toString() {
 		return "Poi09 [S:" + size() + ", lon:" + nf(getLongitude()) + ", lat:" + nf(getLatitude()) + ", n:" + getName() + "]";
