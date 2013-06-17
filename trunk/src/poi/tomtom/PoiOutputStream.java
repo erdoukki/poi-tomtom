@@ -3,6 +3,9 @@ package poi.tomtom;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PoiOutputStream extends OutputStream {
 
@@ -103,6 +106,10 @@ public class PoiOutputStream extends OutputStream {
 	 */
 	public void writePoi(Poi poi) throws IOException {
 		switch (poi.getType()) {
+			case Category.TYPE_CATEGORIES: {
+				write((Categories)poi);
+				return;
+			}
 			case Poi01.TYPE_01: {
 				write((Poi01)poi);
 				return;
@@ -161,6 +168,25 @@ public class PoiOutputStream extends OutputStream {
 				throw new StreamCorruptedException(
 						String.format("invalid type code: %02X", poi.getType()));
 			}
+		}
+	}
+
+	/**
+	 * Writes the specified {@link Categories Categories} to this output stream.
+	 * @throws IOException 
+	 */
+	private void write(Categories poi) throws IOException {
+		int count = poi.count(); 
+		writeInt(count);
+		for (Poi category: poi) {
+			int id = ((Category) category).getCategoryId();
+			writeInt(id);
+		}
+		int offset = poi.count() * 8 + 8; 
+		writeInt(offset);
+		for (Poi category: poi) {
+			offset += ((PoiContainer) category).size();
+			writeInt(offset);
 		}
 	}
 
