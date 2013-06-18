@@ -143,7 +143,11 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	 * @return decoded description
 	 */
 	public void setName(String name, CharMode charMode) {
-		this.name = encode(name, charMode);
+		if (code == 6) {
+			this.name = super.encode(name, charMode);
+		} else {
+			this.name = encode(name, charMode);
+		}
 		super.setSize(this.name.length + (unknown != null?unknown.length:0) + HEADER);
 	}
 
