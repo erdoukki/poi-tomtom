@@ -75,13 +75,13 @@ public class PoiInputStream extends InputStream {
 	public <P extends Poi> P readPoi() throws IOException {
 		byte type;
 		if ((mode == Mode.DAT) && (getParent() == null)) {
-			type = Category.TYPE_CATEGORIES;
+			type = Categories.TYPE_CATEGORIES;
 		} else {
 			type = peekByte();
 		}
 
 		switch (type) {
-			case Category.TYPE_CATEGORIES: {
+			case Categories.TYPE_CATEGORIES: {
 				return (P) readCategory(type);
 			}
 			case Poi01.TYPE_01: {

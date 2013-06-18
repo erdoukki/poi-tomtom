@@ -94,7 +94,6 @@ Here are the categories IDs that exists in Tomtom Navigator. This list is as com
 public class Category extends Pois {
 
 	public static final int TYPE_CATEGORY = -4;
-	public static final int TYPE_CATEGORIES = -5;
 
 	/**
 	 * id length in bytes.
@@ -118,7 +117,7 @@ public class Category extends Pois {
 	/**
 	 * constructor.
 	 */
-	protected Category(int type, PoiContainer parent) {
+	public Category(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 

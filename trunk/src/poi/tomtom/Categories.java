@@ -2,7 +2,9 @@ package poi.tomtom;
 
 public class Categories extends Pois {
 
-	protected Categories(int type, PoiContainer parent) {
+	public static final int TYPE_CATEGORIES = -5;
+
+	public Categories(int type, PoiContainer parent) {
 		super(type, parent);
 	}
 
