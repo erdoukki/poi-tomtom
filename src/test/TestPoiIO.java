@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream;
 
 import org.junit.Test;
 
+import poi.tomtom.Categories;
+import poi.tomtom.Category;
 import poi.tomtom.LogCategory;
 import poi.tomtom.Poi01;
 import poi.tomtom.Poi02;
@@ -21,7 +23,9 @@ import poi.tomtom.Poi09;
 import poi.tomtom.Poi10;
 import poi.tomtom.Poi12;
 import poi.tomtom.Poi13;
+import poi.tomtom.PoiCommon;
 import poi.tomtom.PoiInputStream;
+import poi.tomtom.PoiInputStream.Mode;
 import poi.tomtom.PoiOutputStream;
 
 public class TestPoiIO {
@@ -47,6 +51,8 @@ public class TestPoiIO {
 	private static final byte[] POI10 = new byte[] {0x01, 0x22, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x0a, 0x05, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x73, 0x09, 0x3c, 0x5f, 0x0e};
 	private static final byte[] POI12 = new byte[] {0x01, 0x24, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x0c, 0x07, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x51, 0x02, (byte) 0x89, 0x5c, (byte) 0xd3, 0x21, 0x03};
 	private static final byte[] POI13 = new byte[] {0x1d, 0x14, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x06, 0x00, 0x00, 0x00, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
+	private static final byte[] POICAT = new byte[] {0x01, 0x00, 0x00, 0x00, (byte) 0x8e, 0x1c, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x2f, 0x00, 0x00, 0x00, 
+		0x1d, 0x14, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x06, 0x00, 0x00, 0x00, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
 	
 	@Test 
 	public void testRead01() {
@@ -527,5 +533,53 @@ public class TestPoiIO {
 		byte[] result = baos.toByteArray();
 		//System.out.println(PoiCommon.hex(result));
 		assertArrayEquals(POI13, result);
+	}
+
+	@Test 
+	public void testReadCategories() {
+		ByteArrayInputStream bais = new ByteArrayInputStream(POICAT);
+		PoiInputStream is = new PoiInputStream(bais, Mode.DAT);
+		Categories categories = null;
+		Poi13 poi = null;
+		try {
+			categories = is.readPoi();
+			poi = is.readPoi();
+			log.info(poi);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertNotNull(categories);
+		assertEquals(categories.count(), 1);
+		assertNotNull(poi);
+		assertEquals(poi.getType(), Poi13.TYPE_1D);
+		assertEquals(poi.size(), NAME.length() * 2 + 3 + 3);
+		assertEquals(poi.getLon(), LON1);
+		assertEquals(poi.getLat(), LAT1);
+		assertEquals(poi.getName(), NAME);
+	}
+
+	@Test 
+	public void testWriteCategories() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PoiOutputStream is = new PoiOutputStream(baos);
+		Categories categories = new Categories(Categories.TYPE_CATEGORIES, null);
+		Category category = new Category(Category.TYPE_CATEGORY, categories);
+		category.setCategoryId(0x1C8E);
+		categories.add(category);
+		Poi13 poi = new Poi13(Poi13.TYPE_1D, category);
+		poi.setSize(Poi13.HEADER);
+		poi.setLon(LON1);
+		poi.setLat(LAT1);
+		poi.setCode(6);
+		poi.setName(NAME);
+		try {
+			is.writePoi(categories);
+			is.writePoi(poi);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		byte[] result = baos.toByteArray();
+		//System.out.println(PoiCommon.hex(result));
+		assertArrayEquals(POICAT, result);
 	}
 }

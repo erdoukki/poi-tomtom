@@ -106,7 +106,7 @@ public class PoiOutputStream extends OutputStream {
 	 */
 	public void writePoi(Poi poi) throws IOException {
 		switch (poi.getType()) {
-			case Category.TYPE_CATEGORIES: {
+			case Categories.TYPE_CATEGORIES: {
 				write((Categories)poi);
 				return;
 			}
