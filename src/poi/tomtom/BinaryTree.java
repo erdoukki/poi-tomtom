@@ -219,9 +219,7 @@ public class BinaryTree<T> {
 			public boolean containsAll(Collection<?> arg0) {throw new RuntimeException("unimplemented");}
 
 			@Override
-			public boolean isEmpty() {
-				return null == prev();
-			}
+			public boolean isEmpty() {throw new RuntimeException("unimplemented");}
 
 			@Override
 			public Iterator<BitContainer> iterator() {
@@ -230,7 +228,7 @@ public class BinaryTree<T> {
 
 					@Override
 					public boolean hasNext() {
-						return (!isEmpty()) && ((null == current) || (null != current.next()));
+						return ((null == current) ? null != prev() : null != current.next());
 					}
 
 					@Override
