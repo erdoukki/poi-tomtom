@@ -219,21 +219,27 @@ public class BinaryTree<T> {
 			public boolean containsAll(Collection<?> arg0) {throw new RuntimeException("unimplemented");}
 
 			@Override
-			public boolean isEmpty() {throw new RuntimeException("unimplemented");}
+			public boolean isEmpty() {
+				return null == prev();
+			}
 
 			@Override
 			public Iterator<BitContainer> iterator() {
 				return new Iterator<BitContainer>() {
-					private BinaryTree<T> current = prev();
+					private BinaryTree<T> current = null;
 
 					@Override
 					public boolean hasNext() {
-						return null != current.next();
+						return (!isEmpty()) && ((null == current) || (null != current.next()));
 					}
 
 					@Override
 					public BitContainer next() {
-						current = current.next();
+						if (null == current) {
+							current = prev();
+						} else {
+							current = current.next();
+						}
 						return current.getKey();
 					}
 
