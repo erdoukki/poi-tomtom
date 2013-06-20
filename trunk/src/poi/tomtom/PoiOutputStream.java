@@ -3,9 +3,6 @@ package poi.tomtom;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StreamCorruptedException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class PoiOutputStream extends OutputStream {
 
