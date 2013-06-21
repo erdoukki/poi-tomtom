@@ -218,23 +218,23 @@ and then                        : station
   <tr><td>                        </td><td>  (U+00DD)</td></tr>
   <tr><td>                        </td><td>  (U+00DE)</td></tr>
   <tr><td>               101011110</td><td>&#x00DF;  (U+00DF)</td></tr>
-  <tr><td>           0110000111010</td><td>&#x00E0;  (U+00Å0)</td></tr>
-  <tr><td>            010001101100</td><td>&#x00E1;  (U+00Å1)</td></tr>
-  <tr><td>         010001101101001</td><td>&#x00E2;  (U+00Å2)</td></tr>
-  <tr><td>          01000110110101</td><td>&#x00E3;  (U+00Å3)</td></tr>
-  <tr><td>              1010111110</td><td>&#x00E4;  (U+00Å4)</td></tr>
-  <tr><td>           1010001101011</td><td>  (U+00Å5)</td></tr>
-  <tr><td>            010001100010</td><td>&#x00E6;  (U+00Å6)</td></tr>
-  <tr><td>           1010111000001</td><td>&#x00E7;  (U+00Å7)</td></tr>
-  <tr><td>            101000110111</td><td>&#x00E8;  (U+00Å8)</td></tr>
-  <tr><td>              1010001111</td><td>&#x00E9;  (U+00Å9)</td></tr>
-  <tr><td>        0000101101110110</td><td>&#x00EA;  (U+00ÅA)</td></tr>
-  <tr><td>          10101111110001</td><td>&#x00EB;  (U+00ÅB)</td></tr>
-  <tr><td>          01001010010110</td><td>&#x00EC;  (U+00ÅC)</td></tr>
-  <tr><td>             10101110100</td><td>&#x00ED;  (U+00ÅD)</td></tr>
-  <tr><td>101011111100001000100111</td><td>&#x00ED;  (U+00ÅD)</td></tr>
-  <tr><td>       00001011011101111</td><td>&#x00EE;  (U+00ÅE)</td></tr>
-  <tr><td>       01100001110111011</td><td>&#x00EF;  (U+00ÅF)</td></tr>
+  <tr><td>           0110000111010</td><td>&#x00E0;  (U+00E0)</td></tr>
+  <tr><td>            010001101100</td><td>&#x00E1;  (U+00E1)</td></tr>
+  <tr><td>         010001101101001</td><td>&#x00E2;  (U+00E2)</td></tr>
+  <tr><td>          01000110110101</td><td>&#x00E3;  (U+00E3)</td></tr>
+  <tr><td>              1010111110</td><td>&#x00E4;  (U+00E4)</td></tr>
+  <tr><td>           1010001101011</td><td>  (U+00E5)</td></tr>
+  <tr><td>            010001100010</td><td>&#x00E6;  (U+00E6)</td></tr>
+  <tr><td>           1010111000001</td><td>&#x00E7;  (U+00E7)</td></tr>
+  <tr><td>            101000110111</td><td>&#x00E8;  (U+00E8)</td></tr>
+  <tr><td>              1010001111</td><td>&#x00E9;  (U+00E9)</td></tr>
+  <tr><td>        0000101101110110</td><td>&#x00EA;  (U+00EA)</td></tr>
+  <tr><td>          10101111110001</td><td>&#x00EB;  (U+00EB)</td></tr>
+  <tr><td>          01001010010110</td><td>&#x00EC;  (U+00EC)</td></tr>
+  <tr><td>             10101110100</td><td>&#x00ED;  (U+00ED)</td></tr>
+  <tr><td>101011111100001000100111</td><td>&#x00ED;  (U+00ED)</td></tr>
+  <tr><td>       00001011011101111</td><td>&#x00EE;  (U+00EE)</td></tr>
+  <tr><td>       01100001110111011</td><td>&#x00EF;  (U+00EF)</td></tr>
   <tr><td>                        </td><td>  (U+00F0)</td></tr>
   <tr><td>           1010111111010</td><td>&#x00F1;  (U+00F1)</td></tr>
   <tr><td>101011111100001000111011</td><td>&#x00F1;  (U+00F1)</td></tr>
@@ -254,10 +254,10 @@ and then                        : station
   <tr><td>                        </td><td>  (U+00FE)</td></tr>
   <tr><td>   000010110111010101011</td><td>&#x00FF;  (U+00FF)</td></tr>
   <tr><td>101011111100001000110111</td><td>&#x0141;  (U+0141)</td></tr>
-  <tr><td>        0000101101110100</td><td>  (U+0142)</td></tr>
+  <tr><td>        0000101101110100</td><td>&#x0142;  (U+0142)</td></tr>
   <tr><td>  1010111111000001011010</td><td>?</td></tr>
 
-  <tr><td>101011111100001000100111</td><td>  (U+00ÅD)</td></tr>
+  <tr><td>101011111100001000100111</td><td>  (U+00ED)</td></tr>
 
   <tr><td>101011111100001000111110</td><td>?</td></tr>
   <tr><td>101011111100001000110110</td><td>?</td></tr>
@@ -365,6 +365,7 @@ and then                        : station
 					}
 				}
 			}
+			String s = description.substring(i);
 			result.append(found.getKey());
 			i += found.getItem().length();
 		}
