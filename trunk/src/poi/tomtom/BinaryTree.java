@@ -43,6 +43,9 @@ public class BinaryTree<T> {
 			codes.loadFromXML(new FileInputStream(fileName));
 			for (Entry<Object, Object> code: codes.entrySet()) {
 				String key = (String) code.getKey();
+				if (key.contains("?")) {
+					continue;
+				}
 				@SuppressWarnings("unchecked")
 				T value = (T) code.getValue();
 				put(new BitContainer(key), value);
@@ -79,9 +82,13 @@ public class BinaryTree<T> {
 
 	private void put(Bit key, T item) {
 		if (key.isLast()) {
-			this.item = item;
-			this.key = key.bits();
-			//log.trace(getKey().toString());
+			if ((this.item == null) && (this.key == null)) {
+				this.item = item;
+				this.key = key.bits();
+				//log.trace(getKey().toString());
+			} else {
+				log.error("conflict when add " + item + " key " + this.key + ", existing " + node1.item);
+			}
 		} else {
 			if (key.get()) {
 				if (node1 == null) {
