@@ -77,26 +77,21 @@ public class BinaryTree<T> {
 	}
 
 	public void put(BitContainer key, T item) {
-		put(new Bit(key, 0), item);
-	}
-
-	private void put(Bit key, T item) {
-		if (key.isLast()) {
+		if (getKey().length() == key.length()) {
 			if ((this.item == null) && (this.key == null)) {
 				this.item = item;
-				this.key = key.bits();
+				this.key = key;
 				//log.trace(getKey().toString());
 			} else {
 				log.error("conflict when add " + item + " key " + this.key + ", existing " + node1.item);
 			}
 		} else {
-			if (key.get()) {
+			if (key.get(getKey().length())) {
 				if (node1 == null) {
 					node1 = new BinaryTree<T>(this);
 				} else if (node1.item != null) {
 					log.error("conflict when add " + item + ", existing " + node1.item);
 				}
-				key.inc();
 				node1.put(key, item);
 			} else {
 				if (node0 == null) {
@@ -104,29 +99,23 @@ public class BinaryTree<T> {
 				} else if (node0.item != null) {
 					log.error("conflict when add " + item + ", existing " + node0.item);
 				}
-				key.inc();
 				node0.put(key, item);
 			}
 		}
 	}
 
 	public BinaryTree<T> find(BitContainer key) {
-		return find(new Bit(key, 0));
-	}
-
-	private BinaryTree<T> find(Bit key) {
-		if (key.isLast()) {
+		if (getKey().length() == key.length()) {
 			//log.trace(getKey().toString());
 			return this;
 		}
-		if (key.get()) {
+		if (key.get(getKey().length())) {
 			if (node1 == null) {
 				if (null == item) {
-					throw new BitException(Integer.toString(key.index()));
+					throw new BitException(Integer.toString(getKey().length()));
 				}
 				return this;
 			}
-			key.inc();
 			try {
 				return node1.find(key);
 			} catch (BitException e) {
@@ -136,11 +125,10 @@ public class BinaryTree<T> {
 		} else {
 			if (node0 == null) {
 				if (null == item) {
-					throw new BitException(Integer.toString(key.index()));
+					throw new BitException(Integer.toString(getKey().length()));
 				}
 				return this;
 			}
-			key.inc();
 			try {
 				return node0.find(key);
 			} catch (BitException e) {
