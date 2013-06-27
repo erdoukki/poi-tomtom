@@ -73,7 +73,7 @@ public class PoiInputStream extends InputStream {
 
 	@SuppressWarnings("unchecked")
 	public <P extends Poi> P readPoi() throws IOException {
-		byte type;
+		int type;
 		if ((mode == Mode.DAT) && (getParent() == null)) {
 			type = Categories.TYPE_CATEGORIES;
 		} else {
@@ -213,7 +213,7 @@ public class PoiInputStream extends InputStream {
 		return count;
 	}
 
-	private Pois readCategory(byte type) throws IOException {
+	private Pois readCategory(int type) throws IOException {
 		Pois pois = new Categories(type, getParent());
 		int count = readPOIS();
 		for (int i = 0; i < count; i++) {
