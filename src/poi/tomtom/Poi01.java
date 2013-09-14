@@ -75,6 +75,7 @@ public class Poi01 extends Pois implements AreaRecord {
 		return false;
 	}
 
+	@Override
 	public boolean add(PoiRecord poi) {
 		if (longitude1 < poi.getLon()) {
 			longitude1 = poi.getLon();
