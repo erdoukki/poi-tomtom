@@ -1,10 +1,5 @@
 package poi.tomtom;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
 <h3>Record 13.</h3>
 This Record is an POI Record. The POI description is compressed (compression type 13)
@@ -51,13 +46,15 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 	private byte[] unknown;
 	private byte[] name = new byte[] {0};
 
-	protected static final BinaryTree<String> tree = new BinaryTree<String>();
+	private final Dictionary dictionary;
 
 	/**
 	 * constructor.
+	 * @param dictionary 
 	 */
-	public Poi13(int type, PoiContainer parent) {
+	public Poi13(int type, PoiContainer parent, Dictionary dictionary) {
 		super(type, parent);
+		this.dictionary = dictionary;
 	}
 
 	@Override
@@ -159,143 +156,16 @@ public class Poi13 extends PoiCommon implements PoiRecord {
 		super.setSize(this.name.length + (unknown != null?unknown.length:0) + HEADER);
 	}
 
-	/**
-	 * Decodes POI description.
-<p/>
-The compressed method is the following :
-<p/>
-Each character of the POI description consume a variable number a bits, using 
-a transposition table (see {@link Enc29 Enc29} for the transposition table). 
-<p/>
-The block of data has to be used as a series of bits. There is a special sequence 
-of bit that have a special meaning (End of String).
-<br/>
-The way the bits are arranged in the block is a little special : each byte must 
-reverse the position of his bits as the following :
-<br/>
-The byte (binary format) 0bABCDEFGH will be transform in 0bHGFEDCBA
-<br/>
-So 0b10010010 will be transform in 0b01001001
-<p/>
-Then, the data can be decoded, using the transposition table.
-<br/>
-For example
-<pre>
-starting with the bytes : 0x68 0x78 0x3c 0xb2 0x01
-This can be transform in binary : 01101000 01111000 00111100 10010010 00000001
-and then revert                 : 00010110 00011110 00111100 01001101 10000000
-and then, using b-tree table    : 00010 1100 0011 1100 0111 1000 1001 1011 (0000000)
-and then                        : station
-</pre>
-	 *
-	 * @return decoded description
-	 */
+	/** Decodes POI description. */
 	@Override
-	protected String decode(byte[] name) {
-		BitContainer bits = new BitContainer(name.clone(), true);
-		StringBuffer result = new StringBuffer();
-		try {
-			while (!bits.isEmpty()) {
-				BinaryTree<String> node = tree.find(bits);
-				String value = node.getItem();
-				if (value == null) {
-					//log.error("npe!");
-				}
-				if (value.length() == 0) {
-					/** eos */
-					return result.toString();
-				}
-				result.append(value);
-				bits.delete(node.getKey().length());
-			}
-		} catch (BitException e) {
-			int index = Integer.parseInt(e.getMessage());
-			throw new BitException(catchBits(result.toString(), bits.toString().substring(index).toString()));
-		}
-		return result.toString();
-	}
-
-	private String catchBits(String result, String bits) {
-		Set<String> unknownKeys = tree.unknownKeys();
-		String found = "";
-		for (String key: unknownKeys) {
-			/** looking for longest key that fit */
-			if (bits.startsWith(key)) {
-				found = key;
-				break;
-			}
-		}
-		if (found.isEmpty()) {
-			return result + " - unknown (" + (result.length() + 1) + ") " + bits;
-		}
-		List<String> suggestions = new ArrayList<String>();
-		while (found.length() < 25) {
-			try {
-				if (bits.length() < found.length()) break;
-				String str = bits.substring(found.length());
-				StringBuffer flip = new StringBuffer();
-				for (int i = 0; i < ((str.length() + 7) / 8); i++) {
-					for (int j = 7; j >= 0; j--) {
-						if (i * 8 + j < str.length()) {
-							flip.append(str.charAt(i * 8 + j));
-						} else {
-							flip.append("0");
-						}
-					}
-				}
-				BitContainer rest = new BitContainer(flip.toString());
-				suggestions.add("key " + found + " : " + result + "?" + decode(rest.buff()));
-			} catch (Exception e) {
-				/** do nothing */
-			}
-			if (bits.length() <= found.length()) break;
-			found += bits.substring(found.length(), found.length() + 1);
-		}
-		if (!suggestions.isEmpty()) {
-			String str = "";
-			for (String suggestion: suggestions)
-				str += "\n" + suggestion;
-			return str;
-		}
-		return result + " - unknown (" + (result.length() + 1) + ") " + bits;
+	protected String decode(byte[] description) {
+		return dictionary.decode(description);
 	}
 
 	/** Encode plain text to byte array */
 	@Override
 	byte[] encode(String description, CharMode mode) {
-		BitContainer result = new BitContainer(new byte[0], true);
-		int i = 0;
-		while (i < description.length()) {
-			BinaryTree<String> found = null; 
-			for (BitContainer key: tree.keySet()) {
-				BinaryTree<String> node = tree.find(key);
-				if (description.substring(i).startsWith(node.getItem())) {
-					if ((found == null) || (node.getItem().length() > found.getItem().length())) {
-						/** next longest node fron the tree*/
-						found = node;
-					}
-				}
-			}
-			result.append(found.getKey());
-			i += found.getItem().length();
-		}
-		/** eol */
-		for (BitContainer key: tree.keySet()) {
-			BinaryTree<String> node = tree.find(key);
-			if (node.getItem().isEmpty()) {
-				result.append(node.getKey());
-				break;
-			}
-		}
-		return result.buff();
-	}
-
-	static void putAll() {
-		tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
-	}
-
-	static void put(BitContainer key, String s) {
-		tree.put(key, s);
+		return dictionary.encode(description);
 	}
 
 	@Override

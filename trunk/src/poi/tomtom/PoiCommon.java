@@ -104,9 +104,10 @@ public abstract class PoiCommon implements Poi {
 	/** Decode plain text from byte array */
 	String decode(byte[] description) {
 		byte[] buff = description;
-//		if ((0x9b == b2ch(buff[0])) && (0x9b == b2ch(buff[1]))) {
-//			buff = new BitContainer(buff).flipBytes(2);
-//		}
+		if ((0x9b == b2ch(buff[0])) && (0x9b == b2ch(buff[1]))) {
+			System.out.println();
+//TODO			buff = new BitContainer(buff).flipBytes(2);
+		}
 		if ((CharMode.UTF16.prefix[0] == b2ch(buff[0])) && (CharMode.UTF16.prefix[1] == b2ch(buff[1]))) {
 			/** to UTF16 */
 			StringBuffer result = new StringBuffer();

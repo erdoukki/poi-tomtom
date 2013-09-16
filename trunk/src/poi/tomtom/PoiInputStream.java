@@ -21,6 +21,8 @@ public class PoiInputStream extends InputStream {
 		OV2, DAT
 	}
 
+	private PoiContext context;
+	
 	private final Mode mode;
 	/** underlying stream */
 	private final InputStream in;
@@ -29,13 +31,14 @@ public class PoiInputStream extends InputStream {
 	/** parents map */
 	private Map<PoiContainer, Integer> parents;
 
-	private Dictionary dict;
-
+	private boolean b = false;
+	
 	public PoiInputStream(InputStream in) {
 		this(in, Mode.OV2);
 	}
 
 	public PoiInputStream(InputStream in, Mode mode) {
+		this.context = new PoiContext();
 		this.in = in;
 		this.mode = mode;
 		parents = new LinkedHashMap<PoiContainer, Integer>();
@@ -76,6 +79,13 @@ public class PoiInputStream extends InputStream {
 		int type;
 		if ((mode == Mode.DAT) && (getParent() == null)) {
 			type = Categories.TYPE_CATEGORIES;
+			if (b) {
+				while (available() > 0) {
+					int i = read();
+				}
+				return null;
+			}
+			b = true;
 		} else {
 			type = peekByte();
 		}
@@ -132,20 +142,21 @@ public class PoiInputStream extends InputStream {
 			}
 			default: {
 				throw new StreamCorruptedException(
-				String.format("invalid type code: %02X", type));
+				String.format("invalid type code: %02X", (type & 0xff)));
 			}
 		}
 	}
 
 	private int readPOIS() throws IOException {
 		int count = readInt();
-		if (count == Dictionary.POIS) {
-			dict = new Dictionary();
+		if (count == ExplDictionary.POIS) {
+			ExplDictionary dict = new ExplDictionary();
+			context.setDictionary(dict);
 
 			/** 01 00 01 00 00 00 00 00 00 00 00 00 00 00 */
-			byte[] unknown1 = new byte[Dictionary.UNKNOWN1.length];
+			byte[] unknown1 = new byte[ExplDictionary.UNKNOWN1.length];
 			read(unknown1);
-			if (!Arrays.equals(unknown1, Dictionary.UNKNOWN1)) {
+			if (!Arrays.equals(unknown1, ExplDictionary.UNKNOWN1)) {
 				log.warn("unexpected unknown 1 - " + PoiCommon.hex(unknown1));
 			}
 
@@ -169,11 +180,11 @@ public class PoiInputStream extends InputStream {
 
 			/** 01 01 */
 			int unknown2 = readByte();
-			if (unknown2 != Dictionary.UNKNOWN2) {
+			if (unknown2 != ExplDictionary.UNKNOWN2) {
 				log.warn("unexpected unknown 2 - 0x" + Integer.toHexString(unknown2));
 			}
 			int unknown3 = readByte();
-			if (unknown3 != Dictionary.UNKNOWN3) {
+			if (unknown3 != ExplDictionary.UNKNOWN3) {
 				log.warn("unexpected unknown 3 - 0x" + Integer.toHexString(unknown3));
 			}
 
@@ -204,11 +215,9 @@ public class PoiInputStream extends InputStream {
 			/** entries description */
 			read(dictBuff);
 
-			dict.getTree(Poi13.tree);
+			dict.create();
 
 			count = readInt();
-		} else {
-			Poi13.tree.loadFromXml(System.getProperty("user.dir") + File.separator + "etc" + File.separator + Poi09.DEFAULT_XML);
 		}
 		return count;
 	}
@@ -223,18 +232,18 @@ public class PoiInputStream extends InputStream {
 			pois.add(category);
 		}
 		Map<PoiContainer, Integer> stack = new LinkedHashMap<PoiContainer, Integer>();
-		if (dict == null) {
+		if (context.hasExplDictionary()) {
+			for (Poi category: pois) {
+				int size = readInt();
+				stack.put((PoiContainer) category, size);
+				//log.debug(size + " - " + category);
+			}
+		} else {
 			int offset = readInt(); 
 			for (Poi category: pois) {
 				int catOffset = readInt();
 				int size = catOffset - offset;
 				offset = catOffset;
-				stack.put((PoiContainer) category, size);
-				//log.debug(size + " - " + category);
-			}
-		} else {
-			for (Poi category: pois) {
-				int size = readInt();
 				stack.put((PoiContainer) category, size);
 				//log.debug(size + " - " + category);
 			}
@@ -395,7 +404,7 @@ public class PoiInputStream extends InputStream {
 
 	private Poi09 readPoi09(int type) throws IOException {
 		PoiContainer parent = getParent();
-		Poi09 poi = new Poi09(type, parent);
+		Poi09 poi = new Poi09(type, parent, context.getDictionary());
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -458,7 +467,7 @@ public class PoiInputStream extends InputStream {
 
 	private Poi13 readPoi13(int type) throws IOException {
 		PoiContainer parent = getParent();
-		Poi13 poi = new Poi13(type, parent);
+		Poi13 poi = new Poi13(type, parent, context.getDictionary());
 		type = readByte();
 		int size = readByte();
 		poi.setSize(size);
@@ -541,6 +550,16 @@ public class PoiInputStream extends InputStream {
 		} else {
 			return in.read();
 		}
+	}
+
+	@Override
+	public int read(byte[] b) throws IOException {
+		int result = read(b, 0, b.length);
+		while (result < b.length) {
+			int r = read(b, result, b.length - result);
+			result += r;
+		}
+		return result;
 	}
 
 	@Override
