@@ -1,13 +1,8 @@
 package poi.tomtom;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -17,56 +12,22 @@ public class BinaryTree<T> {
 
 	private static LogCategory log = LogCategory.getLogger(BinaryTree.class);
 
-	private T item = null;
+	private T value = null;
 	private BitContainer key = null;
 	private BinaryTree<T> node0;
 	private BinaryTree<T> node1;
 	private final BinaryTree<T> root;
 
 	public BinaryTree() {
-		root = null;
+		this(null);
 	}
 
 	public BinaryTree(BinaryTree<T> root) {
 		this.root = root;
 	}
 
-	public BinaryTree(String fileName) {
-		root = null;
-		loadFromXml(fileName);
-	}
-
-	public void loadFromXml(String fileName) {
-		clean();
-		Properties codes = new Properties();
-		try {
-			codes.loadFromXML(new FileInputStream(fileName));
-			for (Entry<Object, Object> code: codes.entrySet()) {
-				String key = (String) code.getKey();
-				if (key.contains("?")) {
-					continue;
-				}
-				@SuppressWarnings("unchecked")
-				T value = (T) code.getValue();
-				put(new BitContainer(key), value);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void clean() {
-		item = null;
-		key = null;
-		node0 = null;
-		node1 = null;
-		//root = null;
-	}
-
-	public T getItem() {
-		return item;
+	public T getValue() {
+		return value;
 	}
 
 	public BitContainer getKey() {
@@ -76,30 +37,31 @@ public class BinaryTree<T> {
 		return key;
 	}
 
-	public void put(BitContainer key, T item) {
+	public BinaryTree<T> put(BitContainer key, T value) {
 		if (getKey().length() == key.length()) {
-			if ((this.item == null) && (this.key == null)) {
-				this.item = item;
+			if ((this.value == null) && (this.key == null)) {
+				this.value = value;
 				this.key = key;
 				//log.trace(getKey().toString());
 			} else {
-				log.error("conflict when add " + item + " key " + this.key + ", existing " + node1.item);
+				log.error("conflict when add " + value + " key " + this.key + ", existing " + node1.value);
 			}
+			return this;
 		} else {
 			if (key.get(getKey().length())) {
 				if (node1 == null) {
 					node1 = new BinaryTree<T>(this);
-				} else if (node1.item != null) {
-					log.error("conflict when add " + item + ", existing " + node1.item);
+				} else if (node1.value != null) {
+					log.error("conflict when add " + value + ", existing " + node1.value);
 				}
-				node1.put(key, item);
+				return node1.put(key, value);
 			} else {
 				if (node0 == null) {
 					node0 = new BinaryTree<T>(this);
-				} else if (node0.item != null) {
-					log.error("conflict when add " + item + ", existing " + node0.item);
+				} else if (node0.value != null) {
+					log.error("conflict when add " + value + ", existing " + node0.value);
 				}
-				node0.put(key, item);
+				return node0.put(key, value);
 			}
 		}
 	}
@@ -111,7 +73,7 @@ public class BinaryTree<T> {
 		}
 		if (key.get(getKey().length())) {
 			if (node1 == null) {
-				if (null == item) {
+				if (null == value) {
 					throw new BitException(Integer.toString(getKey().length()));
 				}
 				return this;
@@ -124,7 +86,7 @@ public class BinaryTree<T> {
 			}
 		} else {
 			if (node0 == null) {
-				if (null == item) {
+				if (null == value) {
 					throw new BitException(Integer.toString(getKey().length()));
 				}
 				return this;
@@ -165,7 +127,7 @@ public class BinaryTree<T> {
 
 	private BinaryTree<T> next() {
 		if (null != node1) {
-			if (null != node1.item) {
+			if (null != node1.value) {
 				return node1;
 			} else {
 				return node1.next();
@@ -184,7 +146,7 @@ public class BinaryTree<T> {
 			} else {
 				return null;
 			}
-		} else if (null != item) {
+		} else if (null != value) {
 			return this;
 		} else if (null != node1) {
 			return node1.prev();
@@ -202,7 +164,7 @@ public class BinaryTree<T> {
 			public boolean add(BitContainer arg0) {throw new RuntimeException("unimplemented");}
 
 			@Override
-			public boolean addAll(Collection arg0) {throw new RuntimeException("unimplemented");}
+			public boolean addAll(@SuppressWarnings("rawtypes") Collection arg0) {throw new RuntimeException("unimplemented");}
 
 			@Override
 			public void clear() {throw new RuntimeException("unimplemented");}
@@ -256,6 +218,7 @@ public class BinaryTree<T> {
 			@Override
 			public Object[] toArray() {throw new RuntimeException("unimplemented");}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public Object[] toArray(Object[] arg0) {throw new RuntimeException("unimplemented");}
 		};
@@ -283,7 +246,7 @@ public class BinaryTree<T> {
 				}
 				root = root.root;
 			}
-			//log.trace(node.getKey() + " \"" + node.getItem() + "\"");
+			//log.trace(node.getKey() + " \"" + node.getValue() + "\"");
 		}
 		return unknownKeys;
 	}

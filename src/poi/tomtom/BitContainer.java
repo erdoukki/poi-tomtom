@@ -126,7 +126,7 @@ public class BitContainer {
 	/**
 	 * Set index bit with value.
 	 */
-	boolean set(int index, boolean value) {
+	private boolean set(int index, boolean value) {
 		int mask;
 		if (flip) {
 			mask = 1 << ((start + index) % 8);

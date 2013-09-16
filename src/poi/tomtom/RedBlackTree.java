@@ -1,3 +1,5 @@
+package poi.tomtom;
+
 import java.util.Iterator;
 
 public class RedBlackTree<T extends Comparable<T>> implements Iterable<RedBlackTree<T>> {
@@ -9,6 +11,10 @@ public class RedBlackTree<T extends Comparable<T>> implements Iterable<RedBlackT
 	private Colour colour;
 
 	public enum Colour {BLACK, RED}
+
+	public RedBlackTree() {
+		this(null);
+	}
 
 	public RedBlackTree(RedBlackTree<T> parent) {
 		this.parent = parent;
