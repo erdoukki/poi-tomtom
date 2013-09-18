@@ -1,7 +1,6 @@
 package poi.tomtom;
 
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StreamCorruptedException;
@@ -21,7 +20,7 @@ public class PoiInputStream extends InputStream {
 		OV2, DAT
 	}
 
-	private PoiContext context;
+	private final PoiContext context;
 	
 	private final Mode mode;
 	/** underlying stream */
