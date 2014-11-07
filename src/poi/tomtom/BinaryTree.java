@@ -6,6 +6,16 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Binary tree container. Every element has a {@link BitContainer} key and contains a value.
+ * The length of key defines level of the element. The length of the root element's key is zero. 
+ * On every next level the length is plus one.
+ * 
+ * (r)oot
+ *   \ 
+ *   (t)his
+ *   / \
+ * (0) (1) nodes
+ * 
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
 public class BinaryTree<T> {
@@ -18,18 +28,37 @@ public class BinaryTree<T> {
 	private BinaryTree<T> node1;
 	private final BinaryTree<T> root;
 
+	/**
+	 * Constructs the root element contains key with zero length.
+	 * 
+	 */
 	public BinaryTree() {
 		this(null);
 	}
 
+	/**
+	 * Constructs an element with the parameter root.
+	 *  
+	 * @param root
+	 */
 	public BinaryTree(BinaryTree<T> root) {
 		this.root = root;
 	}
 
+	/**
+	 * Extracts the value of the element.
+	 * 
+	 * @return the value
+	 */
 	public T getValue() {
 		return value;
 	}
 
+	/**
+	 * Extracts the key of the element even if key is not set yet.
+	 * 
+	 * @return the key
+	 */
 	public BitContainer getKey() {
 		if (key == null) {
 			return key();
@@ -37,6 +66,13 @@ public class BinaryTree<T> {
 		return key;
 	}
 
+	/**
+	 * Recursive put. If element exists already then logs an error.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return the element
+	 */
 	public BinaryTree<T> put(BitContainer key, T value) {
 		if (getKey().length() == key.length()) {
 			if ((this.value == null) && (this.key == null)) {
@@ -66,6 +102,12 @@ public class BinaryTree<T> {
 		}
 	}
 
+	/**
+	 * Recursive find.
+	 * 
+	 * @param key looking for
+	 * @return found element
+	 */
 	public BinaryTree<T> find(BitContainer key) {
 		if (getKey().length() == key.length()) {
 			//log.trace(getKey().toString());
@@ -100,6 +142,11 @@ public class BinaryTree<T> {
 		}
 	}
 
+	/**
+	 * Extracts the key of the element when it is not set yet.
+	 * 
+	 * @return the key
+	 */
 	private BitContainer key() {
 		if (root != null) {
 			if (root.node0 == this) {
@@ -115,6 +162,11 @@ public class BinaryTree<T> {
 		return new BitContainer(new byte[0], 0, 0);
 	}
 
+	/**
+	 * Recursive extracts the previous element, if exist.
+	 * 
+	 * @return the previous element
+	 */
 	private BinaryTree<T> prev() {
 		if (null != node0) {
 			return node0.prev();
@@ -125,6 +177,11 @@ public class BinaryTree<T> {
 		}
 	}
 
+	/**
+	 * Recursive extracts the next element, if exist.
+	 * 
+	 * @return the next element
+	 */
 	private BinaryTree<T> next() {
 		if (null != node1) {
 			if (null != node1.value) {
@@ -139,6 +196,11 @@ public class BinaryTree<T> {
 		}
 	}
 
+	/**
+	 * Recursive extracts the next element of the parameter element, if exist.
+	 * 
+	 * @return the next element
+	 */
 	private BinaryTree<T> next(BinaryTree<T> from) {
 		if (from == node1) {
 			if (null != root) {
@@ -157,6 +219,11 @@ public class BinaryTree<T> {
 		}
 	}
 
+	/**
+	 * Extracts the key set.
+	 * 
+	 * @return the key set
+	 */
 	public Set<BitContainer> keySet() {
 		return new Set<BitContainer>() {
 
@@ -224,6 +291,11 @@ public class BinaryTree<T> {
 		};
 	}
 
+	/**
+	 * Extracts a set of undefined keys of the tree.
+	 * 
+	 * @return the set of undefined keys of the tree
+	 */
 	public Set<String> unknownKeys() {
 		Set<String> unknownKeys = new HashSet<String>();
 		for (BitContainer key: keySet()) {

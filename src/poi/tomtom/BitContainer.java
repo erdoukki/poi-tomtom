@@ -1,6 +1,8 @@
 package poi.tomtom;
 
 /**
+ * Bit set of a byte array.
+ * 
  * @author <a href="mailto:oritomov@yahoo.com">orlin tomov</a>
  */
 public class BitContainer {
@@ -8,16 +10,37 @@ public class BitContainer {
 	private byte[] buff;
 	private int length;
 	private int start;
-	boolean flip;
+	private boolean flip;
 
+	/**
+	 * Construct bit set from a byte array <b>buff</b>. Could be flipped.
+	 * 
+	 * @param buff to construct from
+	 * @param flip order
+	 */
 	public BitContainer(byte[] buff, boolean flip) {
 		this(buff, 0, buff.length * 8, flip);
 	}
 
+	/**
+	 * Construct bit set from a byte array <b>buff</b> beginning from <b>start</b> with a <b>length</b>.
+	 * 
+	 * @param buff to construct from
+	 * @param start from
+	 * @param length with
+	 */
 	BitContainer(byte[] buff, int start, int length) {
 		this(buff, start, length, false);
 	}
 
+	/**
+	 * Construct bit set from a byte array <b>buff</b> beginning from <b>start</b> with a <b>length</b>. Could be flipped.
+	 * 
+	 * @param buff to construct from
+	 * @param start from
+	 * @param length with
+	 * @param flip order
+	 */
 	BitContainer(byte[] buff, int start, int length, boolean flip) {
 		this.buff = buff;
 		this.start = start;
@@ -25,17 +48,22 @@ public class BitContainer {
 		this.flip = flip;
 	}
 
-	BitContainer(String s) {
+	/**
+	 * Construct bit set from a <b>string</b>.
+	 * 
+	 * @param string to construct from
+	 */
+	BitContainer(String string) {
 		start = 0;
-		length = s.length();
+		length = string.length();
 		buff = new byte[(length + 7) / 8];
 		for (int i = 0; i < buff.length; i++) {
 			String t;
-			if (s.length() < 8) {
-				t = s + "00000000".substring(s.length());
+			if (string.length() < 8) {
+				t = string + "00000000".substring(string.length());
 			} else {
-				t = s.substring(0, 8);
-				s = s.substring(8);
+				t = string.substring(0, 8);
+				string = string.substring(8);
 			}
 			buff[i] = (byte)Integer.parseInt(t, 2);
 		}
@@ -45,6 +73,8 @@ public class BitContainer {
 
 	/**
 	 * Returns the buff.
+	 * 
+	 * @return the buffer
 	 */
 	public byte[] buff() {
 		return buff;
@@ -52,6 +82,8 @@ public class BitContainer {
 
 	/**
 	 * Returns the length of this bit set.
+	 * 
+	 * @return the length
 	 */
 	public int length() {
 		return length;
@@ -59,11 +91,18 @@ public class BitContainer {
 
 	/**
 	 * Returns the start of this bit set.
+	 * 
+	 * @return the start of this bit set
 	 */
 	public int start() {
 		return start;
 	}
 
+	/**
+	 * Is it empty.
+	 * 
+	 * @return is it empty
+	 */
 	public boolean isEmpty() {
 		return length() == 0;
 	}
@@ -71,12 +110,14 @@ public class BitContainer {
 	// ------------------ container
 
 	/**
-	 * Append b to current.
+	 * Append <b>bits</b> to the current set.
+	 * 
+	 * @param bits to add
 	 */
-	public void append(BitContainer b) {
-		if (start + length + b.length > buff.length * 8) {
+	public void append(BitContainer bits) {
+		if (start + length + bits.length > buff.length * 8) {
 			/** new buffer */
-			byte[] result = new byte[((start % 8) + length + b.length + 7) / 8];
+			byte[] result = new byte[((start % 8) + length + bits.length + 7) / 8];
 			/** copy old to new (bytes) without unused */
 			for (int k = 0; k < ((length + 7) / 8); k++) {
 				result[k] = buff[k + (start / 8)];
@@ -86,13 +127,15 @@ public class BitContainer {
 		}
 		//Bit b1 = new Bit(b, b.start);
 		//Bit b2 = new Bit(result, start + length);
-		for (int k = 0; k < b.length; k++, length++) {
-			set(length, b.get(k));
+		for (int k = 0; k < bits.length; k++, length++) {
+			set(length, bits.get(k));
 		}
 	}
 
 	/**
-	 * Returns flip copy of BitContainer with given <b>size</b>.
+	 * Returns a flipped copy of the set with given <b>size</b>.
+	 * 
+	 * @param size
 	 */
 	public BitContainer flip(int size) {
 		if (size > length) {
@@ -110,7 +153,10 @@ public class BitContainer {
 	// ------------------ bit
 
 	/**
-	 * Does index bit is set
+	 * Does <b>index</b> bit is set.
+	 * 
+	 * @param index
+	 * @return 
 	 */
 	boolean get(int index) {
 		int mask;
@@ -124,7 +170,11 @@ public class BitContainer {
 	}
 
 	/**
-	 * Set index bit with value.
+	 * Set <b>index</b> bit with <b>value</b>.
+	 * 
+	 * @param index
+	 * @param value
+	 * @return
 	 */
 	private boolean set(int index, boolean value) {
 		int mask;
@@ -140,6 +190,9 @@ public class BitContainer {
 	}
 
 	/**
+	 * Delete count bits from the beginning of the set.
+	 * 
+	 * @param count bits to delete.
 	 */
 	public void delete(int count) {
 		length -= count;
