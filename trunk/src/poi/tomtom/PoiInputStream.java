@@ -43,6 +43,10 @@ public class PoiInputStream extends InputStream {
 		parents = new LinkedHashMap<PoiContainer, Integer>();
 	}
 
+	public PoiContext getContext() {
+		return context;
+	}
+
 	private PoiContainer getParent() {
 		Iterator<PoiContainer> i = parents.keySet().iterator();
 		PoiContainer result = null;
@@ -80,6 +84,7 @@ public class PoiInputStream extends InputStream {
 			type = Categories.TYPE_CATEGORIES;
 			if (b) {
 				while (available() > 0) {
+					@SuppressWarnings("unused")
 					int i = read();
 				}
 				return null;

@@ -270,8 +270,7 @@ public class ImplDictionary extends Dictionary {
 				while (!bits.isEmpty()) {
 					BinaryTree<String> node = binTree.find(bits);
 					String value = node.getValue();
-					if (value.length() == 0) {
-						// eos
+					if (value.equals(EOS)) {
 						return result.toString();
 					}
 					result.append(value);

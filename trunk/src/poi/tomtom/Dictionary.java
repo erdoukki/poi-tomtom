@@ -7,6 +7,8 @@ This dictionary used to decode {@link Poi09 Record 09} and {@link Poi13 Record 1
 */
 public abstract class Dictionary {
 
+	protected static final String EOS = "";
+
 	protected BinaryTree<String> binTree = new BinaryTree<String>();
 	protected RedBlackTree<String> rbTree = new RedBlackTree<String>();
 
@@ -15,6 +17,7 @@ public abstract class Dictionary {
 	}
 
 	protected void put(BitContainer bits, String str) {
+		@SuppressWarnings("unused")
 		RedBlackTree<String> value = rbTree.add(str);
 		binTree.put(bits, str);
 	}
@@ -59,8 +62,7 @@ and then                        : station
 			while (!bits.isEmpty()) {
 				BinaryTree<String> node = binTree.find(bits);
 				String value = node.getValue();
-				if (value.length() == 0) {
-					/** eos */
+				if (value.equals(EOS)) {
 					return result.toString();
 				}
 				result.append(value);
