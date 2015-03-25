@@ -29,6 +29,9 @@ public class Poi09 extends Poi07 {
 	 */
 	public Poi09(int type, PoiContainer parent, Dictionary dictionary) {
 		super(type, parent);
+		if (dictionary == null) {
+			dictionary = new PoiContext().getDictionary();
+		}
 		this.dictionary = dictionary;
 	}
 
