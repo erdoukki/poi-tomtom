@@ -7,11 +7,17 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 
 import poi.tomtom.Categories;
 import poi.tomtom.Category;
+import poi.tomtom.Dictionary;
+import poi.tomtom.ExplDictionary;
 import poi.tomtom.LogCategory;
 import poi.tomtom.Poi01;
 import poi.tomtom.Poi02;
@@ -24,6 +30,8 @@ import poi.tomtom.Poi09;
 import poi.tomtom.Poi10;
 import poi.tomtom.Poi12;
 import poi.tomtom.Poi13;
+import poi.tomtom.PoiCommon;
+import poi.tomtom.PoiContext;
 import poi.tomtom.PoiInputStream;
 import poi.tomtom.PoiInputStream.Mode;
 import poi.tomtom.PoiOutputStream;
@@ -40,23 +48,26 @@ public class TestPoiIO {
 	private static final int LAT3 = 6789012;
 	private static final String NAME = "station";
 
-	private static final byte[] POI01 = new byte[] {0x01, 0x15, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00};
-	private static final byte[] POI02 = new byte[] {0x02, 0x1e, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
-	private static final byte[] POI04 = new byte[] {0x01, 0x1c, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x04, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf};
-	private static final byte[] POI05 = new byte[] {0x01, 0x1e, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x05, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x05, 0x00};
-	private static final byte[] POI06 = new byte[] {0x01, 0x1f, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x06, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x05, 0x00, 0x00};
-	private static final byte[] POI07 = new byte[] {0x01, 0x2e, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x07, 0x11, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
-	private static final byte[] POI08 = new byte[] {0x01, 0x22, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x08, 0x05, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x29, 0x64, 0x2C, (byte) 0xE8, 0x24};
-	private static final byte[] POI09 = new byte[] {0x01, 0x22, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x09, 0x05, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x68, 0x78, 0x3c, (byte) 0xb2, 0x01};
-	private static final byte[] POI10 = new byte[] {0x01, 0x22, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x0a, 0x05, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x73, 0x09, 0x3c, 0x5f, 0x0e};
-	private static final byte[] POI12 = new byte[] {0x01, 0x24, 0x00, 0x00, 0x00, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x35, (byte) 0xa7, 0x56, 0x00, (byte) 0x94, (byte) 0x97, 0x67, 0x00, 0x0c, 0x07, 0x15, (byte) 0xbf, 0x34, 0x52, (byte) 0xc5, (byte) 0xbf, 0x51, 0x02, (byte) 0x89, 0x5c, (byte) 0xd3, 0x21, 0x03};
-	private static final byte[] POI13 = new byte[] {0x1d, 0x14, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x06, 0x00, 0x00, 0x00, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
-	private static final byte[] POICAT = new byte[] {0x01, 0x00, 0x00, 0x00, (byte) 0x8e, 0x1c, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x2f, 0x00, 0x00, 0x00, 
-		0x1d, 0x14, (byte) 0x87, (byte) 0xd6, 0x12, 0x00, (byte) 0xce, (byte) 0xca, 0x23, 0x00, 0x06, 0x00, 0x00, 0x00, 0x3e, 0x3e, 0x73, 0x21, 0x74, 0x21, 0x61, 0x21, 0x74, 0x21, 0x69, 0x21, 0x6f, 0x21, 0x6e, 0x21, 0x00};
+	private static final String POI01  = "01 15 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00";
+	private static final String POI02  = "02 1e 00 00 00 87 d6 12 00 ce ca 23 00 3e 3e 73 21 74 21 61 21 74 21 69 21 6f 21 6e 21 00";
+	private static final String POI04  = "01 1c 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 04 15 bf 34 52 c5 bf";
+	private static final String POI05  = "01 1e 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 05 15 bf 34 52 c5 bf 05 00";
+	private static final String POI06  = "01 1f 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 06 15 bf 34 52 c5 bf 05 00 00";
+	private static final String POI07  = "01 2e 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 07 11 15 bf 34 52 c5 bf 3e 3e 73 21 74 21 61 21 74 21 69 21 6f 21 6e 21 00";
+	private static final String POI08  = "01 22 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 08 05 15 bf 34 52 c5 bf 29 64 2C E8 24";
+	private static final String POI09  = "01 22 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 09 05 15 bf 34 52 c5 bf 68 78 3c b2 01";
+	private static final String POI10  = "01 22 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 0a 05 15 bf 34 52 c5 bf 73 09 3c 5f 0e";
+	private static final String POI12  = "01 24 00 00 00 87 d6 12 00 ce ca 23 00 35 a7 56 00 94 97 67 00 0c 07 15 bf 34 52 c5 bf 51 02 89 5c d3 21 03";
+	private static final String POI13  = "1d 14 87 d6 12 00 ce ca 23 00 06 00 00 00 3e 3e 73 21 74 21 61 21 74 21 69 21 6f 21 6e 21 00";
+	private static final String POICAT = "01 00 00 00 8e 1c 00 00 10 00 00 00 2f 00 00 00 1d 14 87 d6 12 00 ce ca 23 00 06 00 00 00 3e 3e 73 21 74 21 61 21 74 21 69 21 6f 21 6e 21 00";
+	private static final String POIS   = "50 4f 49 53 01 00 01 00 00 00 00 00 00 00 00 00 00 00 06 04 00 33 00 03 cc c5 64 01 01 04 07 33 00 00 00 ff ff ff ff 0a 00 00 00 00 02 88 73 7a 98 9e 7e bb 41";
+	public byte[] hexToBytes(String hexString) {
+		return DatatypeConverter.parseHexBinary(hexString.replaceAll(" ", ""));
+	}
 	
 	@Test 
 	public void testRead01() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI01);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI01));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi01 poi = null;
 		try {
@@ -90,12 +101,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI01, result);
+		assertArrayEquals(hexToBytes(POI01), result);
 	}
 
 	@Test 
 	public void testRead02() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI02);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI02));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi02 poi = null;
 		try {
@@ -127,12 +138,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI02, result);
+		assertArrayEquals(hexToBytes(POI02), result);
 	}
 
 	@Test 
 	public void testRead04() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI04);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI04));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi04 poi = null;
 		try {
@@ -171,12 +182,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI04, result);
+		assertArrayEquals(hexToBytes(POI04), result);
 	}
 
 	@Test 
 	public void testRead05() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI05);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI05));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi05 poi = null;
 		try {
@@ -217,12 +228,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI05, result);
+		assertArrayEquals(hexToBytes(POI05), result);
 	}
 
 	@Test 
 	public void testRead06() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI06);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI06));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi06 poi = null;
 		try {
@@ -263,12 +274,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI06, result);
+		assertArrayEquals(hexToBytes(POI06), result);
 	}
 
 	@Test 
 	public void testRead07() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI07);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI07));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi07 poi = null;
 		try {
@@ -309,12 +320,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI07, result);
+		assertArrayEquals(hexToBytes(POI07), result);
 	}
 
 	@Test 
 	public void testRead08() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI08);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI08));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi08 poi = null;
 		try {
@@ -355,12 +366,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI08, result);
+		assertArrayEquals(hexToBytes(POI08), result);
 	}
 
 	@Test 
 	public void testRead09() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI09);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI09));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi09 poi = null;
 		try {
@@ -389,7 +400,7 @@ public class TestPoiIO {
 		parent.setLat1(LAT1);
 		parent.setLon2(LON3);
 		parent.setLat2(LAT3);
-		Poi09 poi = new Poi09(Poi09.TYPE_09, parent);
+		Poi09 poi = new Poi09(Poi09.TYPE_09, parent, null);
 		poi.setSize(Poi09.SIZE);
 		poi.setLongitude(LON2);
 		poi.setLatitude(LAT2);
@@ -401,12 +412,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI09, result);
+		assertArrayEquals(hexToBytes(POI09), result);
 	}
 
 	@Test 
 	public void testRead10() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI10);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI10));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi10 poi = null;
 		try {
@@ -447,12 +458,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI10, result);
+		assertArrayEquals(hexToBytes(POI10), result);
 	}
 
 	@Test 
 	public void testRead12() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI12);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI12));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi12 poi = null;
 		try {
@@ -493,12 +504,12 @@ public class TestPoiIO {
 			e.printStackTrace();
 		}
 		byte[] result = baos.toByteArray();
-		assertArrayEquals(POI12, result);
+		assertArrayEquals(hexToBytes(POI12), result);
 	}
 
 	@Test 
 	public void testRead13() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POI13);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POI13));
 		PoiInputStream is = new PoiInputStream(bais);
 		Poi13 poi = null;
 		try {
@@ -519,7 +530,7 @@ public class TestPoiIO {
 	public void testWrite13() {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PoiOutputStream is = new PoiOutputStream(baos);
-		Poi13 poi = new Poi13(Poi13.TYPE_1D, null);
+		Poi13 poi = new Poi13(Poi13.TYPE_1D, null, null);
 		poi.setSize(Poi13.HEADER);
 		poi.setLon(LON1);
 		poi.setLat(LAT1);
@@ -532,12 +543,47 @@ public class TestPoiIO {
 		}
 		byte[] result = baos.toByteArray();
 		//System.out.println(PoiCommon.hex(result));
-		assertArrayEquals(POI13, result);
+		assertArrayEquals(hexToBytes(POI13), result);
+	}
+
+	@Test 
+	public void testReadDic() {
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POIS));
+		PoiInputStream is = new PoiInputStream(bais, Mode.DAT);
+		Dictionary dict = null;
+		try {
+			is.readPoi();
+			dict = is.getContext().getDictionary();
+			//log.info(dict);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertNotNull(dict);
+	}
+
+	@Test 
+	public void testWriteDic() {
+		Collection<String> texts = new ArrayList<String>();
+		texts.add(NAME + " 1");
+		texts.add(NAME + " 2");
+				
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PoiOutputStream is = new PoiOutputStream(baos);
+		ExplDictionary dict = new ExplDictionary();
+		dict.create(texts);
+		try {
+			is.writePOIS(dict);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		byte[] result = baos.toByteArray();
+		//System.out.println(PoiCommon.hex(result));
+		assertArrayEquals(hexToBytes(POIS), result);
 	}
 
 	@Test 
 	public void testReadCategories() {
-		ByteArrayInputStream bais = new ByteArrayInputStream(POICAT);
+		ByteArrayInputStream bais = new ByteArrayInputStream(hexToBytes(POICAT));
 		PoiInputStream is = new PoiInputStream(bais, Mode.DAT);
 		Categories categories = null;
 		Poi13 poi = null;
@@ -574,7 +620,7 @@ public class TestPoiIO {
 		area.setLat1(4073770);
 		area.setLon2(2913010);
 		area.setLat2(4041332);
-		Poi09 poi = new Poi09(Poi09.TYPE_09, area);
+		Poi09 poi = new Poi09(Poi09.TYPE_09, area, null);
 		poi.setSize(Poi09.SIZE);
 		poi.setLon(10979490);
 		poi.setLat(12071913);

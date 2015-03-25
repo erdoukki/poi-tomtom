@@ -169,6 +169,62 @@ public class PoiOutputStream extends OutputStream {
 	}
 
 	/**
+	 * Writes the {@link ExplDictionary} to this output stream.
+	 */
+	public void writePOIS(ExplDictionary dict) throws IOException {
+
+		/** 50 4f 49 53 = "POIS" */
+		writeInt(ExplDictionary.POIS);
+		
+		/** 01 00 01 00 00 00 00 00 00 00 00 00 00 00 */
+		write(ExplDictionary.UNKNOWN1);
+
+		/** size in bits of id */
+		int idLen = dict.getIdLen();
+		writeByte(idLen);
+
+		/** size in bytes of keys description */
+		int headerLen = dict.getHeaderLen();
+		writeInt2(headerLen);
+
+		/** keys number */
+		int keyNum = dict.getKeyNum();
+		writeInt2(keyNum);
+
+		/** keys description */
+		byte[] keysBuff = dict.getKeysBuff();
+		write(keysBuff);
+
+		/** 01 01 */
+		writeByte(ExplDictionary.UNKNOWN2);
+		writeByte(ExplDictionary.UNKNOWN3);
+
+		/** string size length in bits. */
+		int strLen = dict.getStrLen();
+		writeByte(strLen);
+
+		/** number of bits per char */
+		int chSize = dict.getChSize();
+		writeByte(chSize);
+
+		/** id value of biggest single char */
+		int ascii = dict.getAscii();
+		writeInt(ascii);
+
+		/** unknown */
+		int unknown4 = -1;
+		writeInt(unknown4);
+
+		/** size in bytes of entries description */
+		int dictLen = dict.getDictLen();
+		writeInt(dictLen);
+
+		/** entries description */
+		byte[] dictBuff = dict.getDictBuff();
+		write(dictBuff);
+	}
+
+	/**
 	 * Writes the specified {@link Categories Categories} to this output stream.
 	 * @throws IOException 
 	 */

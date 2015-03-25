@@ -133,6 +133,13 @@ public class BitContainer {
 	}
 
 	/**
+	 * Returns a flipped copy of the set.
+	 */
+	public BitContainer flip() {
+		return flip(length());
+	}
+
+	/**
 	 * Returns a flipped copy of the set with given <b>size</b>.
 	 * 
 	 * @param size
@@ -254,6 +261,16 @@ public class BitContainer {
 		}
 	}
 
+	public void xor(BitContainer bits) {
+		for (int i = 0; i < bits.length; i++) {
+			if (i > length) {
+				break;
+			}
+			boolean xor = get(i) ^ bits.get(i);
+			set(i, xor);
+		}
+	}
+	
 	// ------------------ common
 
 	/**
